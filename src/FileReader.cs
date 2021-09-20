@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.IO.Compression;
 using Salaros.Configuration;
 using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Data;
 
 namespace ParameterComparison
 {
@@ -29,11 +32,26 @@ namespace ParameterComparison
         {
             List<dynamic> data = new();
 
-            var cfgFile = new ConfigParser(path);
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            {
+                using (StreamReader sr = new StreamReader(fs))
+                {
+                    string fileText = sr.ReadToEnd();
+                    string[] tokens = fileText.Split(';');
 
-            cfgFile.GetValue("Numbers", "ConfigurationVersion");
-            cfgFile.GetValue("Strings", "FmType");
+                    foreach (string token in tokens)
+                    {
+                        string[] keyValuePair = token.Split(':');
+                        foreach(var item in keyValuePair)
+                        {
+                            var convertedItem = Convert.ToHexString(Encoding.ASCII.GetBytes(item));
 
+                            data.Add(convertedItem);
+                            Console.WriteLine(convertedItem);
+                        }
+                    }
+                }
+            }
             return data;
         }
     }
