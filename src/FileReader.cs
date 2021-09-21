@@ -1,58 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO.Compression;
-using Salaros.Configuration;
 using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Data;
 
 namespace ParameterComparison
 {
     public static class FileReader
     {
         /// <summary>
-        /// Method extracts zipped files to a new predefined folder.
+        /// Opens and reads GZip format files.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns> An extracted files path, if unable to extract - an empty string. </returns>
-        public static string ExtractZippedFiles(string path)
+        /// <returns> If reading went well, dictionary collection type of key-value pairs,
+        /// otherwise - an empty dictionary collection. </returns>
+        public static Dictionary<string, string> ReadGZippedFiles(string path)
         {
-            string dataSamplesPath = Path.GetFullPath(Path.Combine(path, @"..\"));
-            string extractPath = Path.Combine(dataSamplesPath, @".\extract");
-            ZipFile.ExtractToDirectory(path, extractPath);
+            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
-            return extractPath;
-        }
-
-        public static List<dynamic> ReadCfgFile(string path)
-        {
-            List<dynamic> data = new();
-
-            using (FileStream fs = new FileStream(path, FileMode.Open))
+            using (FileStream fs = File.Open(path, FileMode.Open))
             {
-                using (StreamReader sr = new StreamReader(fs))
+                using GZipStream gzip = new GZipStream(fs, CompressionMode.Decompress);
+                using (StreamReader sr = new StreamReader(fs, System.Text.Encoding.ASCII))
                 {
                     string fileText = sr.ReadToEnd();
-                    string[] tokens = fileText.Split(';');
+                    string[] lines = fileText.Split(';');
 
-                    foreach (string token in tokens)
+                    foreach (string line in lines)
                     {
-                        string[] keyValuePair = token.Split(':');
-                        foreach(var item in keyValuePair)
-                        {
-                            var convertedItem = Convert.ToHexString(Encoding.ASCII.GetBytes(item));
+                        int lineSplit = line.IndexOf(":");
 
-                            data.Add(convertedItem);
-                            Console.WriteLine(convertedItem);
+                        if (lineSplit >= 0)
+                        {
+                            string key = line.Substring(0, lineSplit);
+                            string value = line.Substring(lineSplit + 1);
+
+                            if (!keyValuePairs.ContainsKey(key))
+                            {
+                                keyValuePairs.Add(key, value);
+                                Console.WriteLine("Key : {0}, Value : {1}", key, value);
+                            }
                         }
                     }
                 }
             }
-            return data;
+
+            return keyValuePairs;
         }
     }
 }
