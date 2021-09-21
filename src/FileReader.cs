@@ -11,7 +11,7 @@ namespace ParameterComparison
         /// Opens and reads GZip format files.
         /// </summary>
         /// <param name="path"></param>
-        /// <returns> If reading went well, dictionary collection type of key-value pairs,
+        /// <returns> If parsing went well, returns a dictionary collection of key-value pairs,
         /// otherwise - an empty dictionary collection. </returns>
         public static Dictionary<string, string> ReadGZippedFiles(string path)
         {
@@ -22,25 +22,7 @@ namespace ParameterComparison
                 using GZipStream gzip = new GZipStream(fs, CompressionMode.Decompress);
                 using (StreamReader sr = new StreamReader(fs, System.Text.Encoding.ASCII))
                 {
-                    string fileText = sr.ReadToEnd();
-                    string[] lines = fileText.Split(';');
-
-                    foreach (string line in lines)
-                    {
-                        int lineSplit = line.IndexOf(":");
-
-                        if (lineSplit >= 0)
-                        {
-                            string key = line.Substring(0, lineSplit);
-                            string value = line.Substring(lineSplit + 1);
-
-                            if (!keyValuePairs.ContainsKey(key))
-                            {
-                                keyValuePairs.Add(key, value);
-                                Console.WriteLine("Key : {0}, Value : {1}", key, value);
-                            }
-                        }
-                    }
+                    keyValuePairs = FileParser.ParseCfg(sr);
                 }
             }
 
