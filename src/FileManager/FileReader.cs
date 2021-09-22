@@ -19,10 +19,12 @@ namespace ParameterComparison
 
             using (FileStream fs = File.Open(path, FileMode.Open))
             {
-                using GZipStream gzip = new GZipStream(fs, CompressionMode.Decompress);
-                using (StreamReader sr = new StreamReader(fs, System.Text.Encoding.ASCII))
+                using (GZipStream gzip = new GZipStream(fs, CompressionMode.Decompress))
                 {
-                    keyValuePairs = FileParser.ParseCfg(sr);
+                    using (StreamReader sr = new StreamReader(gzip, System.Text.Encoding.ASCII))
+                    {
+                        keyValuePairs = FileParser.ParseCfg(sr);
+                    }
                 }
             }
 
