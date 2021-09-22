@@ -34,7 +34,6 @@ namespace ParameterComparison
                     if (!keyValuePairs.ContainsKey(key))
                     {
                         keyValuePairs.Add(key, value);
-                        Console.WriteLine("Key: {0}, Value: {1}", key, value);
                     }
                 }
             }

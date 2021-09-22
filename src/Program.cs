@@ -8,9 +8,12 @@ namespace ParameterComparison
     {
         static void Main()
         {
-            string path = "C:/Users/raust/source/repos/ParameterComparison/data_samples/data.zip";
+            string sourcePath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB001-default.cfg";
+            string targetPath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB920-default.cfg";
 
-            Dictionary<string, string> cfgFiles = FileReader.ReadGZippedFiles(path);
+            Dictionary<string, string> sourceFile = FileReader.ReadGZippedFiles(sourcePath);
+            Dictionary<string, string> targetFile = FileReader.ReadGZippedFiles(targetPath);
+
         }
     }
 }
