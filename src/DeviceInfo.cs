@@ -8,19 +8,24 @@ namespace ParameterComparison
 {
     public class DeviceInfo
     {
-        private const string configVersion = "ConfigurationVersion";
-        private const string hwVersion = "HwVersion";
-        private const string title = "Title";
-        private const string minConfiguration = "MinConfiguratorVersion";
-        private const string fmType = "FmType";
-        private const string specId = "SpecId";
+        public const string configVersion = "ConfigurationVersion";
+        public const string hwVersion = "HwVersion";
+        public const string title = "Title";
+        public const string minConfiguration = "MinConfiguratorVersion";
+        public const string fmType = "FmType";
+        public const string specId = "SpecId";
+
+        public DeviceInfo(Dictionary<string, string> sourceFile)
+        {
+            SourceFile = sourceFile;
+        }
 
         public ConfigData ConfigurationVersion { get; set; }
-        public ConfigData HwVersion { get => HwVersion; set => HwVersion.Id = hwVersion; }
-        public ConfigData Title { get => Title; set => Title.Id = title; }
-        public ConfigData MinConfigurationVersion { get => MinConfigurationVersion; set => MinConfigurationVersion.Id = minConfiguration; }
-        public ConfigData FmType { get => FmType; set => FmType.Id = fmType; }
-        public ConfigData SpecId { get => SpecId; set => SpecId.Id = specId; }
-
+        public ConfigData HwVersion { get; set; }
+        public ConfigData Title { get; set; }
+        public ConfigData MinConfigurationVersion { get; set; }
+        public ConfigData FmType { get; set; }
+        public ConfigData SpecId { get; set; }
+        public Dictionary<string, string> SourceFile { get; }
     }
 }
