@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    interface IConfigChangesPrinter
+    interface IConfigFilePrinter
     {
         void PrintDeviceConfigInfo(Dictionary<string, string> data, string path);
         void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData);

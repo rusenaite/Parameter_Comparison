@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace ParameterComparison
 {
-    public class ConfigurationComparison : IConfigChangesPrinter
+    public class ConfigurationComparison : ConfigurationDataPrinter, IConfigFilePrinter
     {
         /// <summary>
         /// Method looks for key-value pairs where keys are only string type.
@@ -81,19 +81,19 @@ namespace ParameterComparison
         }
 
         /// <summary>
-        /// Method converts string type keys that are integers to int type variables.
+        /// Method finds and converts string type keys that are integers to int type variables.
         /// </summary>
         /// <param name="data"></param>
         /// <returns> If convertion went well returns dictionary collection of only int key type 
         /// dictionary collection, otherwise - an empty dictionary. </returns>
-        public static Dictionary<int, string> ConvertStringTypeKeysToInt(Dictionary<string, string> data)
+        public static Dictionary<int, string> GetIntTypeKeys(Dictionary<string, string> data)
         {
             Dictionary<int, string> newData = new();
 
             foreach (var pair in data)
             {
                 bool success = int.TryParse(pair.Key, out int keyAsInt);
-                if(success)
+                if (success)
                 {
                     newData.Add(keyAsInt, pair.Value);
                 }
@@ -131,39 +131,10 @@ namespace ParameterComparison
             }
         }
 
-        /// <summary>
-        /// Method prints configuration information of the given device.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="path"></param>
-        public void PrintDeviceConfigInfo(Dictionary<string, string> data, string path)
+        public void CompareData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            string fileName = Path.GetFileName(path).ToUpper();
-            Console.WriteLine(fileName);
-
-            if (data.TryGetValue("ConfigurationVersion", out string configversion))
-                Console.WriteLine("{0}: {1}", "Configuration Version", configversion);
-
-            if (data.TryGetValue("HwVersion", out string hwversion))
-                Console.WriteLine("{0}: {1}", "Hw Version", hwversion);
-
-            if (data.TryGetValue("Title", out string title))
-                Console.WriteLine("{0}: {1}", "Title", title);
-
-            if (data.TryGetValue("MinConfiguratorVersion", out string minConfiguration))
-                Console.WriteLine("{0}: {1}", "Minimum Configuration", minConfiguration);
-
-            if (data.TryGetValue("FmType", out string fmType))
-                Console.WriteLine("{0}: {1}", "Fm Type", fmType);
-
-            if (data.TryGetValue("SpecId", out string specId))
-                Console.WriteLine("{0}: {1}\n\n", "Spec Id", specId);
-        }
-
-        public void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
-        {
-            Dictionary<int, string> intSourceData = ConvertStringTypeKeysToInt(sourceData);
-            Dictionary<int, string> intTargetData = ConvertStringTypeKeysToInt(targetData);
+            Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
+            Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
 
             int maxCount = intSourceData.Count().CompareTo(intTargetData.Count());
 
@@ -193,48 +164,9 @@ namespace ParameterComparison
                     {
                         PrintAsAdded("A", srcPair);
                     }
-
-                    else
-                    {
-                        //Console.WriteLine("-\t{0}\t{1}\t{2}", srcPair.Key, srcPair.Value, "-");
-                        //Console.WriteLine("-\t{0}\t{1}\t{2}", trgPair.Key, "-", trgPair.Value);
-                    }
-                    
                 }
 
             }
-        }
-
-        public static void PrintAsUnchanged(string action, KeyValuePair<int, string> sourcePair, KeyValuePair<int, string> targetPair)
-        {
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t{2}\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
-            Console.ResetColor();
-        }
-
-        public static void PrintAsAdded(string action, KeyValuePair<int, string> targetPair)
-        {
-            Console.BackgroundColor = ConsoleColor.Green;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t{2}\t{3}", action, targetPair.Key, "-", targetPair.Value);
-            Console.ResetColor();
-        }
-
-        public static void PrintAsRemoved(string action, KeyValuePair<int, string> sourcePair)
-        {
-            Console.BackgroundColor = ConsoleColor.Red;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t{2}\t{3}", action, sourcePair.Key, sourcePair.Value, "-");
-            Console.ResetColor();
-        }
-
-        public static void PrintAsModified(string action, KeyValuePair<int, string> sourcePair, KeyValuePair<int, string> targetPair)
-        {
-            Console.BackgroundColor = ConsoleColor.Yellow;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t{2}\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
-            Console.ResetColor();
         }
 
     }
