@@ -9,5 +9,6 @@ namespace ParameterComparison
     interface IConfigChangesPrinter
     {
         void PrintDeviceConfigInfo(Dictionary<string, string> data, string path);
+        void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData);
     }
 }

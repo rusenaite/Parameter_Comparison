@@ -16,6 +16,8 @@ namespace ParameterComparison
             IConfigChangesPrinter configPrinter = new ConfigurationComparison();
             configPrinter.PrintDeviceConfigInfo(sourceData, sourcePath);
             configPrinter.PrintDeviceConfigInfo(targetData, targetPath);
+
+            configPrinter.PrintConfigData(sourceData, targetData);
         }
     }
 }
