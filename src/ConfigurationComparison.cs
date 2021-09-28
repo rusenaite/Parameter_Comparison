@@ -14,7 +14,7 @@ namespace ParameterComparison
         /// </summary>
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
-        public static void CheckIfDataIsEqual(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
+        public static void CheckForEqualData(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
         {
             if(sourceData == targetData)
             {
