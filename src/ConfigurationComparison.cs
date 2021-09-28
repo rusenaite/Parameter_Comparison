@@ -6,63 +6,26 @@ using System.Text.RegularExpressions;
 
 namespace ParameterComparison
 {
-    public class ConfigurationComparison : ConfigurationDataPrinter, IConfigFilePrinter
+    public class ConfigurationComparison : ConfigurationDataPrinter
     {
         /// <summary>
-        /// Method looks for key-value pairs where keys are only string type.
+        /// Method checks if the data is equal, and if it is, prints all configuration
+        /// data marked as "Unchanged".
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns> A dictionary collection where keys are only string type,
-        /// otherwise - returns an empty dictionary. </returns>
-        public static Dictionary<string, string> GetStringTypeId(Dictionary<string, string> data)
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        public static void CheckIfDataIsEqual(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
         {
-            Dictionary<string, string> stringTypeIdData = new();
-            string str = "";
-
-            foreach (var pair in data.Where(item => item.Key.GetType() == str.GetType()))
+            if(sourceData == targetData)
             {
-                stringTypeIdData.Add(pair.Key, pair.Value);
-            }
-
-            return stringTypeIdData;
-        }
-
-        /// <summary>
-        /// Method removes key-value pairs from the passed dictionary collection if it's
-        /// key (ID) type is string.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> If removing went well, returns dictionary collection without string
-        /// type keys, otherwise returns an empty dictionary. </returns>
-        public static Dictionary<int, string> RemoveStringTypeId(Dictionary<string, string> data)
-        {
-            Dictionary<string, string> stringTypeIdData = GetStringTypeId(data);
-
-            foreach (string key in stringTypeIdData.Keys)
-            {
-                data.Remove(key);
-            }
-
-            Dictionary<int, string> newData = new Dictionary<int, string>((IDictionary<int, string>)data);
-
-            return newData;
-        }
-
-        public bool CheckExtremeCases(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
-        {
-            // Implementation
-
-            return true;
-        }
-
-        public static bool CheckIfDataIsEqual(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
-        {
-            return sourceData == targetData;
-        }
-
-        public static bool CheckIfDataExists(Dictionary<int, string> data)
-        {
-            return data == null;
+                foreach(var srcPair in sourceData)
+                {
+                    foreach (var trgPair in targetData)
+                    {
+                        PrintAsUnchanged("U", srcPair, trgPair);
+                    }
+                }
+            } 
         }
 
         /// <summary>
@@ -84,29 +47,49 @@ namespace ParameterComparison
         /// Method finds and converts string type keys that are integers to int type variables.
         /// </summary>
         /// <param name="data"></param>
-        /// <returns> If convertion went well returns dictionary collection of only int key type 
-        /// dictionary collection, otherwise - an empty dictionary. </returns>
+        /// <returns> If convertion went well returns dictionary collection of only int key type, 
+        /// otherwise - an empty dictionary. </returns>
         public static Dictionary<int, string> GetIntTypeKeys(Dictionary<string, string> data)
         {
-            Dictionary<int, string> newData = new();
+            Dictionary<int, string> intKeyData = new();
 
             foreach (var pair in data)
             {
-                bool success = int.TryParse(pair.Key, out int keyAsInt);
+                bool success = int.TryParse(pair.Key, out int key);
                 if (success)
                 {
-                    newData.Add(keyAsInt, pair.Value);
+                    intKeyData.Add(key, pair.Value);
                 }
             }
 
-            return newData;
+            return intKeyData;
         }
 
+        /// <summary>
+        /// Method finds string type keys from mixed-key-type dictionary.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns> If search went well returns dictionary collection of only string key type,
+        /// otherwise - an empty dictionary. </returns>
+        public static Dictionary<string, string> GetStringTypeKeys(Dictionary<string, string> data)
+        {
+            Dictionary<string, string> stringKeyData = new();
+
+            foreach (var pair in from pair in data
+                                 let success = int.TryParse(pair.Key, out int key)
+                                 where !success
+                                 select pair)
+            {
+                stringKeyData.Add(pair.Key, pair.Value);
+            }
+
+            return stringKeyData;
+        }
 
         public static void CompareConfigurations(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            Dictionary<int, string> newSrcData = RemoveStringTypeId(sourceData);
-            Dictionary<int, string> newTrgData = RemoveStringTypeId(targetData);
+            Dictionary<int, string> newSrcData = GetIntTypeKeys(sourceData);
+            Dictionary<int, string> newTrgData = GetIntTypeKeys(targetData);
 
             int maxId = FindMaximumKeyValue(newSrcData, newTrgData);
 
@@ -135,8 +118,6 @@ namespace ParameterComparison
         {
             Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
             Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
-
-            int maxCount = intSourceData.Count().CompareTo(intTargetData.Count());
 
             foreach (var srcPair in intSourceData)
             {
@@ -167,6 +148,14 @@ namespace ParameterComparison
                 }
 
             }
+        }
+
+        public void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        {
+            Dictionary<string, string> srcStringKeyData = GetStringTypeKeys(sourceData);
+            Dictionary<string, string> trgStringKeyData = GetStringTypeKeys(targetData);
+
+
         }
 
     }
