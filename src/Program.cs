@@ -6,14 +6,23 @@ namespace ParameterComparison
 {
     class Program
     {
+        public const string sourcePath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB001-default.cfg";
+        public const string targetPath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB920-default.cfg";
         static void Main()
         {
-            string sourcePath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB001-default.cfg";
-            string targetPath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB920-default.cfg";
+            Dictionary<string, string> sourceData = FileReader.ReadGZippedFiles(sourcePath);
+            Dictionary<string, string> targetData = FileReader.ReadGZippedFiles(targetPath);
 
-            Dictionary<string, string> sourceFile = FileReader.ReadGZippedFiles(sourcePath);
-            Dictionary<string, string> targetFile = FileReader.ReadGZippedFiles(targetPath);
+            IConfigFilePrinter configPrinter = new ConfigurationComparison();
+            //configPrinter.PrintDeviceConfigInfo(sourceData, sourcePath);
+            //configPrinter.PrintDeviceConfigInfo(targetData, targetPath);
 
+            //configPrinter.PrintConfigData(sourceData, targetData);
+
+            IMenuPrinter menuPrinter = new InterfacePrinter(); 
+            menuPrinter.PrintMainMenu();
+
+            InputManager.GetActionChoice();
         }
     }
 }
