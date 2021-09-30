@@ -35,8 +35,8 @@ namespace ParameterComparison
                         break;
                     case 1:
                         IConfigFilePrinter configPrinter = new ConfigurationComparison();
-                        //configPrinter.PrintParametersList();
-                        break;
+                        //configPrinter.ViewParameterList();
+                    break;
                     case 2:
                         //
                         break;

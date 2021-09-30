@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    public class InterfacePrinter : IMenuPrinter
+    public class InterfacePrinter
     {
         public void PrintMainMenu()
         {

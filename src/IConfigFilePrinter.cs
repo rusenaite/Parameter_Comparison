@@ -10,5 +10,6 @@ namespace ParameterComparison
     {
         void PrintDeviceConfigInfo(Dictionary<string, string> data, string path);
         void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData);
+        void ViewParameterList(Dictionary<string, string> sourceData, Dictionary<string, string> targetData);
     }
 }

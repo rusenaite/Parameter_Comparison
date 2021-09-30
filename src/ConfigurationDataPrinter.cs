@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    public class ConfigurationDataPrinter : IConfigFilePrinter
+    public class ConfigurationDataPrinter
     {
         /// <summary>
         /// Method prints configuration information of the given device.
@@ -42,7 +42,7 @@ namespace ParameterComparison
         {
             Console.BackgroundColor = ConsoleColor.Gray;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t{2}\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
             Console.ResetColor();
         }
 
@@ -50,7 +50,7 @@ namespace ParameterComparison
         {
             Console.BackgroundColor = ConsoleColor.Green;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t{2}\t{3}", action, targetPair.Key, "-", targetPair.Value);
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", action, targetPair.Key, "-", targetPair.Value);
             Console.ResetColor();
         }
 
@@ -58,7 +58,7 @@ namespace ParameterComparison
         {
             Console.BackgroundColor = ConsoleColor.Red;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t{2}\t{3}", action, sourcePair.Key, sourcePair.Value, "-");
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, "-");
             Console.ResetColor();
         }
 
@@ -66,14 +66,78 @@ namespace ParameterComparison
         {
             Console.BackgroundColor = ConsoleColor.Yellow;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t{2}\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
             Console.ResetColor();
         }
 
-        public void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        public static void PrintAsStringTypeIdPair(string action, KeyValuePair<string, string> pair)
         {
-            
+            Console.Write("\n{0}\t{1}\t\t\t{2}", action, pair.Key, pair.Value);
         }
 
+        /// <summary>
+        /// Method seperately prints data with string type keys (IDs) (as it is not included
+        /// to the parameter comparison).
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        public static void PrintStringTypeIdData(Dictionary<string, string> stringSourceData, Dictionary<string, string> stringTargetData)
+        {
+            foreach (var srcPair in stringSourceData)
+            {
+                PrintAsStringTypeIdPair("-", srcPair);
+            }
+
+            foreach (var trgPair in stringTargetData)
+            {
+                PrintAsStringTypeIdPair("-", trgPair);
+            }
+        }
+
+        /// <summary>
+        /// Method prints data with int type keys (IDs).
+        /// </summary>
+        /// <param name="intSourceData"></param>
+        /// <param name="intTargetData"></param>
+        public static void PrintIntTypeIdData(Dictionary<int, string> intSourceData, Dictionary<int, string> intTargetData)
+        {
+            foreach (var srcPair in intSourceData)
+            {
+                foreach (var trgPair in intTargetData)
+                {
+                    if (srcPair.Key > trgPair.Key)
+                    {
+                        continue;
+                    }
+
+                    if (srcPair.Key == trgPair.Key)
+                    {
+                        if (srcPair.Value == trgPair.Value)
+                        {
+                            PrintAsUnchanged("U", srcPair, trgPair);
+                            break;
+                        }
+                        else if (srcPair.Value != trgPair.Value
+                            && intSourceData.ContainsKey(trgPair.Key)
+                            && intTargetData.ContainsKey(srcPair.Key))
+                        {
+                            PrintAsModified("M", srcPair, trgPair);
+                            break;
+                        }
+                    }
+
+                    else if (intSourceData.ContainsKey(trgPair.Key) && !intTargetData.ContainsKey(srcPair.Key))
+                    {
+                        PrintAsRemoved("R", srcPair);
+                        break;
+                    }
+
+                    else if (!intSourceData.ContainsKey(trgPair.Key) && intTargetData.ContainsKey(srcPair.Key))
+                    {
+                        PrintAsAdded("A", srcPair);
+                    }
+                }
+            }
+        }
     }
 }

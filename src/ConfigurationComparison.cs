@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace ParameterComparison
 {
-    public class ConfigurationComparison : ConfigurationDataPrinter
+    public class ConfigurationComparison : ConfigurationDataPrinter, IConfigFilePrinter
     {
         /// <summary>
         /// Method checks if the data is equal, and if it is, prints all configuration
@@ -114,40 +114,22 @@ namespace ParameterComparison
             }
         }
 
-        public void CompareData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        /// <summary>
+        /// Method prints parameter list - paramater ID, value and comparison result of
+        /// 2 configuration files.
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        public void ViewParameterList(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
+            Dictionary<string, string> stringSourceData = GetStringTypeKeys(sourceData);
+            Dictionary<string, string> stringTargetData = GetStringTypeKeys(targetData);
+
             Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
             Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
 
-            foreach (var srcPair in intSourceData)
-            {
-                foreach (var trgPair in intTargetData)
-                {
-                    if (srcPair.Key == trgPair.Key)
-                    {
-                        if(srcPair.Value == trgPair.Value)
-                        {
-                            PrintAsUnchanged("U", srcPair, trgPair);
-                        }
-                        
-                        if(srcPair.Value != trgPair.Value)
-                        {
-                            PrintAsModified("M", srcPair, trgPair);
-                        }
-                        
-                    }
-                    if (intSourceData.ContainsKey(trgPair.Key) && !intTargetData.ContainsKey(srcPair.Key))
-                    {
-                        PrintAsRemoved("R", srcPair);
-                    }
-
-                    if (!intSourceData.ContainsKey(trgPair.Key) && intTargetData.ContainsKey(srcPair.Key))
-                    {
-                        PrintAsAdded("A", srcPair);
-                    }
-                }
-
-            }
+            PrintStringTypeIdData(stringSourceData, stringTargetData);
+            PrintIntTypeIdData(intSourceData, intTargetData);
         }
 
         public void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
