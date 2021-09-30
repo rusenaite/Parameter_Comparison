@@ -9,6 +9,14 @@ namespace ParameterComparison
 {
     public class ConfigurationDataPrinter
     {
+        public struct ResultCount
+        {
+            public int unchanged;
+            public int modified;
+            public int removed;
+            public int added;
+        }
+
         /// <summary>
         /// Method prints configuration information of the given device.
         /// </summary>
@@ -99,8 +107,10 @@ namespace ParameterComparison
         /// </summary>
         /// <param name="intSourceData"></param>
         /// <param name="intTargetData"></param>
-        public static void PrintIntTypeIdData(Dictionary<int, string> intSourceData, Dictionary<int, string> intTargetData)
+        public static ResultCount PrintIntTypeIdData(Dictionary<int, string> intSourceData, Dictionary<int, string> intTargetData)
         {
+            ResultCount count = default;
+
             foreach (var srcPair in intSourceData)
             {
                 foreach (var trgPair in intTargetData)
@@ -115,6 +125,7 @@ namespace ParameterComparison
                         if (srcPair.Value == trgPair.Value)
                         {
                             PrintAsUnchanged("U", srcPair, trgPair);
+                            count.unchanged++;
                             break;
                         }
                         else if (srcPair.Value != trgPair.Value
@@ -122,6 +133,7 @@ namespace ParameterComparison
                             && intTargetData.ContainsKey(srcPair.Key))
                         {
                             PrintAsModified("M", srcPair, trgPair);
+                            count.modified++;
                             break;
                         }
                     }
@@ -129,15 +141,25 @@ namespace ParameterComparison
                     else if (intSourceData.ContainsKey(trgPair.Key) && !intTargetData.ContainsKey(srcPair.Key))
                     {
                         PrintAsRemoved("R", srcPair);
+                        count.removed++;
                         break;
                     }
 
                     else if (!intSourceData.ContainsKey(trgPair.Key) && intTargetData.ContainsKey(srcPair.Key))
                     {
                         PrintAsAdded("A", srcPair);
+                        count.added++;
                     }
                 }
             }
+            return count;
+        }
+
+        public static void PrintComparisonResultsSummary(ResultCount count)
+        {
+            Console.WriteLine("U:{0} M:{1} R:{2} A:{3}",
+                              count.unchanged, count.modified,
+                              count.removed, count.added);
         }
     }
 }
