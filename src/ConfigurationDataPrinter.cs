@@ -83,6 +83,11 @@ namespace ParameterComparison
             Console.Write("\n{0}\t{1}\t\t\t{2}", action, pair.Key, pair.Value);
         }
 
+        public static void PrintColumnNames()
+        {
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", "Status", "ID", "Source Value", "Target Value");
+        }
+
         /// <summary>
         /// Method seperately prints data with string type keys (IDs) (as it is not included
         /// to the parameter comparison).
@@ -107,9 +112,9 @@ namespace ParameterComparison
         /// </summary>
         /// <param name="intSourceData"></param>
         /// <param name="intTargetData"></param>
-        public static ResultCount PrintIntTypeIdData(Dictionary<int, string> intSourceData, Dictionary<int, string> intTargetData)
+        public static void PrintIntTypeIdData(Dictionary<int, string> intSourceData, Dictionary<int, string> intTargetData)
         {
-            ResultCount count = default;
+            PrintColumnNames();
 
             foreach (var srcPair in intSourceData)
             {
@@ -125,7 +130,6 @@ namespace ParameterComparison
                         if (srcPair.Value == trgPair.Value)
                         {
                             PrintAsUnchanged("U", srcPair, trgPair);
-                            count.unchanged++;
                             break;
                         }
                         else if (srcPair.Value != trgPair.Value
@@ -133,7 +137,6 @@ namespace ParameterComparison
                             && intTargetData.ContainsKey(srcPair.Key))
                         {
                             PrintAsModified("M", srcPair, trgPair);
-                            count.modified++;
                             break;
                         }
                     }
@@ -141,18 +144,15 @@ namespace ParameterComparison
                     else if (intSourceData.ContainsKey(trgPair.Key) && !intTargetData.ContainsKey(srcPair.Key))
                     {
                         PrintAsRemoved("R", srcPair);
-                        count.removed++;
                         break;
                     }
 
                     else if (!intSourceData.ContainsKey(trgPair.Key) && intTargetData.ContainsKey(srcPair.Key))
                     {
                         PrintAsAdded("A", srcPair);
-                        count.added++;
                     }
                 }
             }
-            return count;
         }
 
         public static void PrintComparisonResultsSummary(ResultCount count)

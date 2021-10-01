@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -186,6 +187,83 @@ namespace ParameterComparison
             count.added = resultDictionaries.added.Count;
 
             PrintComparisonResultsSummary(count);
+        }
+
+        public void FilterParametersById(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string value)
+        {
+            Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
+            Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
+
+            ResultDictionaries resultDictionaries = CompareConfigurations(intSourceData, intTargetData);
+
+            Dictionary<int, string> comparedData = CombineDictionaries(resultDictionaries);
+
+            List<string> foundKeys = SearchForValue(comparedData, value);
+        }
+
+        public Dictionary<int, string> CombineDictionaries(ResultDictionaries dictionaries)
+        {
+            var d1 = dictionaries.unchanged.Keys;
+            var d2 = dictionaries.modified.Keys;
+            var d3 = dictionaries.removed;
+            var d4 = dictionaries.added;
+
+            Dictionary<int, string> comparedData = d1.Concat(d2).Concat(d3).Concat(d4).GroupBy(d => d.Key)
+                                                .ToDictionary(d => d.Key, d => d.First().Value);
+
+            return comparedData;
+        }
+
+        /// <summary>
+        /// Method searches of a specific key value in a list of keys.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="value"></param>
+        /// <returns> If search went well, returns a list of string type keys, 
+        /// otherwise - an empty list. </returns>
+        public List<string> SearchForValue(Dictionary<int, string> data, string value)
+        {
+            List<string> keys = GetKeysAsStrings(data);
+            string enteredVal = value.ToString();
+
+            List<string> foundKeys = new();
+
+            bool found;
+
+            foreach(var key in keys)
+            {
+                found = key.StartsWith(enteredVal, false, CultureInfo.InvariantCulture);
+
+                if (found)
+                {
+                    foundKeys.Add(key);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            return foundKeys;
+        }
+
+        /// <summary>
+        /// Method gets integer type key values from given dictionary and converts it to 
+        /// a list of strings.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns> If convertion went well, returns a list of string type keys, 
+        /// otherwise - an empty list. </returns>
+        public List<string> GetKeysAsStrings(Dictionary<int, string> data)
+        {
+            Dictionary<int, string>.KeyCollection dataKeys = data.Keys;
+
+            List<int> intListOfKeys = dataKeys.ToList();
+            List<string> stringListOfKeys = new();
+
+            intListOfKeys.ForEach(i => stringListOfKeys.Add(i.ToString()));
+
+            return stringListOfKeys;
         }
 
         public void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
