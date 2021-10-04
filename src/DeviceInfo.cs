@@ -15,17 +15,13 @@ namespace ParameterComparison
         public const string fmType = "FmType";
         public const string specId = "SpecId";
 
-        public DeviceInfo(Dictionary<string, string> sourceFile)
-        {
-            SourceFile = sourceFile;
-        }
+        public DeviceInfo() { }
 
-        public ConfigData ConfigurationVersion { get; set; }
-        public ConfigData HwVersion { get; set; }
-        public ConfigData Title { get; set; }
-        public ConfigData MinConfigurationVersion { get; set; }
-        public ConfigData FmType { get; set; }
-        public ConfigData SpecId { get; set; }
-        public Dictionary<string, string> SourceFile { get; }
+        public string ConfigurationVersion { get => configVersion; }
+        public string HwVersion { get => hwVersion; }
+        public string Title { get => title; }
+        public string MinConfigurationVersion { get => minConfiguration; }
+        public string FmType { get => fmType; }
+        public string SpecId { get => specId; }
     }
 }

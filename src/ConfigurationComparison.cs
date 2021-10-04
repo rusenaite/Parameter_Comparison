@@ -9,6 +9,14 @@ namespace ParameterComparison
 {
     public class ConfigurationComparison : ConfigurationDataPrinter, IConfigFilePrinter
     {
+        public struct ResultCount
+        {
+            public int unchanged;
+            public int modified;
+            public int removed;
+            public int added;
+        }
+
         public struct ResultDictionaries
         {
             public Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> unchanged;
@@ -23,18 +31,31 @@ namespace ParameterComparison
         /// </summary>
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
-        public static void CheckForEqualData(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
+        public static bool CheckForEqualData(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
         {
-            if(sourceData == targetData)
+            if (sourceData != targetData)
             {
-                foreach(var srcPair in sourceData)
+                return false;
+            }
+            else
+            {
+                foreach (var srcPair in sourceData)
                 {
                     foreach (var trgPair in targetData)
                     {
-                        PrintAsUnchanged("U", srcPair, trgPair);
+                        if (srcPair.Key > trgPair.Key)
+                        {
+                            continue;
+                        }
+
+                        if (srcPair.Key == trgPair.Key)
+                        {
+                            PrintAsUnchanged("U", srcPair, trgPair);
+                        }
                     }
                 }
-            } 
+                return true;
+            }
         }
 
         /// <summary>
@@ -80,20 +101,6 @@ namespace ParameterComparison
             return stringKeyData;
         }
 
-        /// <summary>
-        /// Method finds maximum key (ID) value from 2 given dictionaries.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <returns> If search went well, returns an integer of maximum ID value, 
-        /// otherwise - 0. </returns>
-        public static int FindMaximumKeyValue(Dictionary<int, string> source, Dictionary<int, string> target)
-        {
-            int sourceMaxKey = source.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
-            int targetMaxKey = target.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
-
-            return sourceMaxKey.CompareTo(targetMaxKey);
-        }
 
         public static ResultDictionaries CompareConfigurations(Dictionary<int, string> intSrcData, Dictionary<int, string> intTrgData)
         {
@@ -149,6 +156,25 @@ namespace ParameterComparison
             return results;
         }
 
+        public static bool ContainsKeys(Dictionary<string, string> data, string[] keys)
+        {
+            return keys.Any() && keys.All(data.ContainsKey);
+        }
+
+        public void ViewDeviceConfigInfo(Dictionary<string, string> data, string path)
+        {
+            Dictionary<string, string> stringData = GetStringTypeKeys(data);
+            DeviceInfo devInfo = new DeviceInfo();
+
+            string[] keys = { devInfo.ConfigurationVersion, devInfo.HwVersion, 
+                            devInfo.Title, devInfo.MinConfigurationVersion, devInfo.FmType };
+
+            if (ContainsKeys(stringData, keys))
+            {
+                PrintDeviceConfigInfo(stringData, path);
+            }
+        }
+
         /// <summary>
         /// Method prints parameter list - paramater ID, value and comparison result of
         /// 2 configuration files.
@@ -163,6 +189,7 @@ namespace ParameterComparison
             Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
             Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
 
+            PrintColumnNames();
             PrintStringTypeIdData(stringSourceData, stringTargetData);
             PrintIntTypeIdData(intSourceData, intTargetData);
         }
@@ -266,13 +293,14 @@ namespace ParameterComparison
             return stringListOfKeys;
         }
 
-        public void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        public void ViewFilteredParameters(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            Dictionary<string, string> srcStringKeyData = GetStringTypeKeys(sourceData);
-            Dictionary<string, string> trgStringKeyData = GetStringTypeKeys(targetData);
-
-
+            
         }
 
+        public void ViewParametersByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        {
+            
+        }
     }
 }

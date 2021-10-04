@@ -4,53 +4,50 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ParameterComparison.ConfigurationComparison;
 
 namespace ParameterComparison
 {
     public class ConfigurationDataPrinter
     {
-        public struct ResultCount
-        {
-            public int unchanged;
-            public int modified;
-            public int removed;
-            public int added;
-        }
 
         /// <summary>
         /// Method prints configuration information of the given device.
         /// </summary>
         /// <param name="data"></param>
         /// <param name="path"></param>
-        public void PrintDeviceConfigInfo(Dictionary<string, string> data, string path)
+        public static void PrintDeviceConfigInfo(Dictionary<string, string> data, string path)
         {
             string fileName = Path.GetFileName(path).ToUpper();
             Console.WriteLine(fileName);
 
-            if (data.TryGetValue("ConfigurationVersion", out string configversion))
-                Console.WriteLine("{0}: {1}", "Configuration Version", configversion);
+            DeviceInfo devInfo = new();
+            string[] keys = { devInfo.ConfigurationVersion, devInfo.HwVersion, devInfo.Title, 
+                            devInfo.MinConfigurationVersion, devInfo.FmType, devInfo.SpecId };
 
-            if (data.TryGetValue("HwVersion", out string hwversion))
-                Console.WriteLine("{0}: {1}", "Hw Version", hwversion);
+            int i = 0;
+            foreach (var pair in data)
+            {
+                if (i < keys.Length && pair.Key == keys[i])
+                {
+                    Console.WriteLine("{0}: {1}", keys[i], pair.Value);
+                    ++i;
+                }
+            }
 
-            if (data.TryGetValue("Title", out string title))
-                Console.WriteLine("{0}: {1}", "Title", title);
+            Console.WriteLine("\n");
+        }
 
-            if (data.TryGetValue("MinConfiguratorVersion", out string minConfiguration))
-                Console.WriteLine("{0}: {1}", "Minimum Configuration", minConfiguration);
-
-            if (data.TryGetValue("FmType", out string fmType))
-                Console.WriteLine("{0}: {1}", "Fm Type", fmType);
-
-            if (data.TryGetValue("SpecId", out string specId))
-                Console.WriteLine("{0}: {1}\n\n", "Spec Id", specId);
+        public static void PrintColumnNames()
+        {
+            Console.Write("\n\n\n{0}\t{1}\t\t\t{2}\t\t\t{3}", "Status", "ID", "Source Value", "Target Value");
         }
 
         public static void PrintAsUnchanged(string action, KeyValuePair<int, string> sourcePair, KeyValuePair<int, string> targetPair)
         {
             Console.BackgroundColor = ConsoleColor.Gray;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
             Console.ResetColor();
         }
 
@@ -58,7 +55,7 @@ namespace ParameterComparison
         {
             Console.BackgroundColor = ConsoleColor.Green;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", action, targetPair.Key, "-", targetPair.Value);
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t\t\t{3}", action, targetPair.Key, "-", targetPair.Value);
             Console.ResetColor();
         }
 
@@ -66,7 +63,7 @@ namespace ParameterComparison
         {
             Console.BackgroundColor = ConsoleColor.Red;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, "-");
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, "-");
             Console.ResetColor();
         }
 
@@ -74,18 +71,13 @@ namespace ParameterComparison
         {
             Console.BackgroundColor = ConsoleColor.Yellow;
             Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t\t\t{3}", action, sourcePair.Key, sourcePair.Value, targetPair.Value);
             Console.ResetColor();
         }
 
         public static void PrintAsStringTypeIdPair(string action, KeyValuePair<string, string> pair)
         {
-            Console.Write("\n{0}\t{1}\t\t\t{2}", action, pair.Key, pair.Value);
-        }
-
-        public static void PrintColumnNames()
-        {
-            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t{3}", "Status", "ID", "Source Value", "Target Value");
+            Console.Write("\n{0}\t{1}\t\t\t\t\t{2}", action, pair.Key, pair.Value);
         }
 
         /// <summary>
@@ -114,8 +106,6 @@ namespace ParameterComparison
         /// <param name="intTargetData"></param>
         public static void PrintIntTypeIdData(Dictionary<int, string> intSourceData, Dictionary<int, string> intTargetData)
         {
-            PrintColumnNames();
-
             foreach (var srcPair in intSourceData)
             {
                 foreach (var trgPair in intTargetData)

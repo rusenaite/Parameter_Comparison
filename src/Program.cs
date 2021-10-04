@@ -14,8 +14,10 @@ namespace ParameterComparison
             Dictionary<string, string> targetData = FileReader.ReadGZippedFiles(targetPath);
 
             IConfigFilePrinter configPrinter = new ConfigurationComparison();
+            configPrinter.ViewDeviceConfigInfo(sourceData, sourcePath);
+            configPrinter.ViewDeviceConfigInfo(targetData, targetPath);
+
             //configPrinter.ViewParameterList(sourceData, targetData);
-            configPrinter.ViewComparisonResultsSummary(sourceData, targetData);
         }
     }
 }
