@@ -1,162 +1,217 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ParameterComparison
 {
-    public class ConfigurationComparison : ConfigurationDataPrinter
+    public class ConfigurationComparison : ConfigurationDataPrinter, IConfigFilePrinter
     {
+        public struct ResultCount
+        {
+            public int unchanged;
+            public int modified;
+            public int removed;
+            public int added;
+        }
+
+        public struct ResultDictionaries
+        {
+            public Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> unchanged;
+            public Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> modified;
+            public Dictionary<int, string> removed;
+            public Dictionary<int, string> added;
+        }
+
         /// <summary>
         /// Method checks if the data is equal, and if it is, prints all configuration
         /// data marked as "Unchanged".
         /// </summary>
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
-        public static void CheckForEqualData(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
+        public static bool CheckForEqualData(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
         {
-            if(sourceData == targetData)
+            if (sourceData != targetData)
             {
-                foreach(var srcPair in sourceData)
+                return false;
+            }
+            else
+            {
+                foreach (var srcPair in sourceData)
                 {
                     foreach (var trgPair in targetData)
                     {
-                        PrintAsUnchanged("U", srcPair, trgPair);
-                    }
-                }
-            } 
-        }
+                        if (srcPair.Key > trgPair.Key)
+                        {
+                            continue;
+                        }
 
-        /// <summary>
-        /// Method finds maximum key (ID) value from 2 given dictionaries.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <returns> If search went well, returns an integer of maximum ID value, 
-        /// otherwise - 0. </returns>
-        public static int FindMaximumKeyValue(Dictionary<int, string> source, Dictionary<int, string> target)
-        {
-            int sourceMaxKey = source.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
-            int targetMaxKey = target.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
-
-            return sourceMaxKey.CompareTo(targetMaxKey);
-        }
-
-        /// <summary>
-        /// Method finds and converts string type keys that are integers to int type variables.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> If convertion went well returns dictionary collection of only int key type, 
-        /// otherwise - an empty dictionary. </returns>
-        public static Dictionary<int, string> GetIntTypeKeys(Dictionary<string, string> data)
-        {
-            Dictionary<int, string> intKeyData = new();
-
-            foreach (var pair in data)
-            {
-                bool success = int.TryParse(pair.Key, out int key);
-                if (success)
-                {
-                    intKeyData.Add(key, pair.Value);
-                }
-            }
-
-            return intKeyData;
-        }
-
-        /// <summary>
-        /// Method finds string type keys from mixed-key-type dictionary.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> If search went well returns dictionary collection of only string key type,
-        /// otherwise - an empty dictionary. </returns>
-        public static Dictionary<string, string> GetStringTypeKeys(Dictionary<string, string> data)
-        {
-            Dictionary<string, string> stringKeyData = new();
-
-            foreach (var pair in from pair in data
-                                 let success = int.TryParse(pair.Key, out int key)
-                                 where !success
-                                 select pair)
-            {
-                stringKeyData.Add(pair.Key, pair.Value);
-            }
-
-            return stringKeyData;
-        }
-
-        public static void CompareConfigurations(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
-        {
-            Dictionary<int, string> newSrcData = GetIntTypeKeys(sourceData);
-            Dictionary<int, string> newTrgData = GetIntTypeKeys(targetData);
-
-            int maxId = FindMaximumKeyValue(newSrcData, newTrgData);
-
-            for (var id = 0; id <= maxId; ++id)
-            {
-                if (newSrcData.ContainsKey(id) && newTrgData.ContainsKey(id))
-                {
-                    
-                }
-                else if (newSrcData.ContainsKey(id) && !newTrgData.ContainsKey(id))
-                {
-
-                }
-                else if (!newSrcData.ContainsKey(id) && newTrgData.ContainsKey(id))
-                {
-
-                }
-                else
-                {
-                    continue;
-                }
-            }
-        }
-
-        public void CompareData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
-        {
-            Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
-            Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
-
-            foreach (var srcPair in intSourceData)
-            {
-                foreach (var trgPair in intTargetData)
-                {
-                    if (srcPair.Key == trgPair.Key)
-                    {
-                        if(srcPair.Value == trgPair.Value)
+                        if (srcPair.Key == trgPair.Key)
                         {
                             PrintAsUnchanged("U", srcPair, trgPair);
                         }
-                        
-                        if(srcPair.Value != trgPair.Value)
-                        {
-                            PrintAsModified("M", srcPair, trgPair);
-                        }
-                        
-                    }
-                    if (intSourceData.ContainsKey(trgPair.Key) && !intTargetData.ContainsKey(srcPair.Key))
-                    {
-                        PrintAsRemoved("R", srcPair);
-                    }
-
-                    if (!intSourceData.ContainsKey(trgPair.Key) && intTargetData.ContainsKey(srcPair.Key))
-                    {
-                        PrintAsAdded("A", srcPair);
                     }
                 }
-
+                return true;
             }
         }
 
-        public void PrintConfigData(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        public static ResultDictionaries CompareConfigurations(Dictionary<int, string> intSrcData, Dictionary<int, string> intTrgData)
         {
-            Dictionary<string, string> srcStringKeyData = GetStringTypeKeys(sourceData);
-            Dictionary<string, string> trgStringKeyData = GetStringTypeKeys(targetData);
+            Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> unchanged = new();
+            Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> modified = new();
+            Dictionary<int, string> removed = new();
+            Dictionary<int, string> added = new();
 
+            foreach (var srcPair in intSrcData)
+            {
+                foreach (var trgPair in intTrgData)
+                {
+                    if (srcPair.Key > trgPair.Key)
+                    {
+                        continue;
+                    }
+
+                    if (srcPair.Key == trgPair.Key)
+                    {
+                        if (srcPair.Value == trgPair.Value)
+                        {
+                            unchanged.Add(srcPair, trgPair);
+                            break;
+                        }
+                        else if (srcPair.Value != trgPair.Value
+                            && intSrcData.ContainsKey(trgPair.Key)
+                            && intTrgData.ContainsKey(srcPair.Key))
+                        {
+                            modified.Add(srcPair, trgPair);
+                            break;
+                        }
+                    }
+
+                    else if (intSrcData.ContainsKey(trgPair.Key) && !intTrgData.ContainsKey(srcPair.Key))
+                    {
+                        removed.Add(srcPair.Key, srcPair.Value);
+                        break;
+                    }
+
+                    else if (!intSrcData.ContainsKey(trgPair.Key) && intTrgData.ContainsKey(srcPair.Key))
+                    {
+                        added.Add(trgPair.Key, trgPair.Value);
+                    }
+                }
+            }
+
+            ResultDictionaries results = new();
+            results.unchanged = unchanged;
+            results.modified = modified;
+            results.removed = removed;
+            results.added = added;
+
+            return results;
+        }
+
+        public static bool ContainsKeys(Dictionary<string, string> data, string[] keys)
+        {
+            return keys.Any() && keys.All(data.ContainsKey);
+        }
+
+        public void ViewDeviceConfigInfo(Dictionary<string, string> data, string path)
+        {
+            data.GetStringTypeKeys();
+            DeviceInfo devInfo = new DeviceInfo();
+
+            string[] keys = { devInfo.ConfigurationVersion, devInfo.HwVersion, 
+                            devInfo.Title, devInfo.MinConfigurationVersion, devInfo.FmType };
+
+            if (ContainsKeys(data.GetStringTypeKeys(), keys))
+            {
+                PrintDeviceConfigInfo(data.GetStringTypeKeys(), path);
+            }
+        }
+
+        /// <summary>
+        /// Method prints parameter list - paramater ID, value and comparison result of
+        /// 2 configuration files.
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        public void ViewParameterList(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        {
+            PrintColumnNames();
+            PrintStringTypeIdData(sourceData.GetStringTypeKeys().RemovedDeviceInfo(), targetData.GetStringTypeKeys().RemovedDeviceInfo());
+            PrintIntTypeIdData(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+        }
+
+        /// <summary>
+        /// Method prints comparison result summary.
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        public void ViewComparisonResultsSummary(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        {
+            ResultDictionaries resultDictionaries = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+
+            ResultCount count = new();
+
+            count.unchanged = resultDictionaries.unchanged.Count;
+            count.modified = resultDictionaries.modified.Count;
+            count.removed = resultDictionaries.removed.Count;
+            count.added = resultDictionaries.added.Count;
+
+            PrintComparisonResultsSummary(count);
+        }
+
+        public void FilterParametersById(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string value)
+        {
+            ResultDictionaries resultDictionaries = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+
+            Dictionary<int, string> combinedComparedData = CombineDictionaries(resultDictionaries);
+
+            // Found keys
+            combinedComparedData.SearchForValue(value);
 
         }
 
+        public Dictionary<int, string> CombineDictionaries(ResultDictionaries dictionaries)
+        {
+            var d1 = dictionaries.unchanged.Keys;
+            var d2 = dictionaries.modified.Keys;
+            var d3 = dictionaries.removed;
+            var d4 = dictionaries.added;
+
+            Dictionary<int, string> comparedData = d1.Concat(d2).Concat(d3).Concat(d4).GroupBy(d => d.Key)
+                                                .ToDictionary(d => d.Key, d => d.First().Value);
+
+            return comparedData;
+        }
+
+        public void ViewFilteredParameters(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        {
+            
+        }
+
+        public void ViewParamByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
+        {
+            ResultDictionaries result = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+
+            switch (choice)
+            {
+                case "U":
+
+                    break;
+                case "M":
+
+                    break;
+                case "R":
+
+                    break;
+                case "A":
+
+                    break;
+
+            }
+        }
     }
 }

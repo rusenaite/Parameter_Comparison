@@ -28,17 +28,17 @@ namespace ParameterComparison
 
         public static void MakeAction(int userChoice)
         {
-            switch(userChoice)
+            IConfigFilePrinter configPrinter = new ConfigurationComparison();
+            switch (userChoice)
                 {
                     case 0:
                         System.Environment.Exit(1);
                         break;
                     case 1:
-                        IConfigFilePrinter configPrinter = new ConfigurationComparison();
-                        //configPrinter.PrintParametersList();
+                        //configPrinter.ViewParameterList();
                         break;
                     case 2:
-                        //
+                        //configPrinter.ViewComparisonResultsSummary();
                         break;
                     case 3:
                         //

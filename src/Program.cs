@@ -14,15 +14,12 @@ namespace ParameterComparison
             Dictionary<string, string> targetData = FileReader.ReadGZippedFiles(targetPath);
 
             IConfigFilePrinter configPrinter = new ConfigurationComparison();
-            //configPrinter.PrintDeviceConfigInfo(sourceData, sourcePath);
-            //configPrinter.PrintDeviceConfigInfo(targetData, targetPath);
+            configPrinter.ViewDeviceConfigInfo(sourceData, sourcePath);
+            configPrinter.ViewDeviceConfigInfo(targetData, targetPath);
 
-            //configPrinter.PrintConfigData(sourceData, targetData);
-
-            IMenuPrinter menuPrinter = new InterfacePrinter(); 
-            menuPrinter.PrintMainMenu();
-
-            InputManager.GetActionChoice();
+            //string choice = "M";
+            configPrinter.ViewParameterList(sourceData, targetData);
+            //configPrinter.ViewParametersByComparisonResult(sourceData, targetData, choice);
         }
     }
 }
