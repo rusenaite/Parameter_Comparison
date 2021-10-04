@@ -58,50 +58,6 @@ namespace ParameterComparison
             }
         }
 
-        /// <summary>
-        /// Method finds and converts string type keys that are integers to int type variables.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> If convertion went well returns dictionary collection of only int key type, 
-        /// otherwise - an empty dictionary. </returns>
-        public static Dictionary<int, string> GetIntTypeKeys(Dictionary<string, string> data)
-        {
-            Dictionary<int, string> intKeyData = new();
-
-            foreach (var pair in data)
-            {
-                bool success = int.TryParse(pair.Key, out int key);
-                if (success)
-                {
-                    intKeyData.Add(key, pair.Value);
-                }
-            }
-
-            return intKeyData;
-        }
-
-        /// <summary>
-        /// Method finds string type keys from mixed-key-type dictionary.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> If search went well returns dictionary collection of only string key type,
-        /// otherwise - an empty dictionary. </returns>
-        public static Dictionary<string, string> GetStringTypeKeys(Dictionary<string, string> data)
-        {
-            Dictionary<string, string> stringKeyData = new();
-
-            foreach (var pair in from pair in data
-                                 let success = int.TryParse(pair.Key, out int key)
-                                 where !success
-                                 select pair)
-            {
-                stringKeyData.Add(pair.Key, pair.Value);
-            }
-
-            return stringKeyData;
-        }
-
-
         public static ResultDictionaries CompareConfigurations(Dictionary<int, string> intSrcData, Dictionary<int, string> intTrgData)
         {
             Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> unchanged = new();
@@ -163,15 +119,15 @@ namespace ParameterComparison
 
         public void ViewDeviceConfigInfo(Dictionary<string, string> data, string path)
         {
-            Dictionary<string, string> stringData = GetStringTypeKeys(data);
+            data.GetStringTypeKeys();
             DeviceInfo devInfo = new DeviceInfo();
 
             string[] keys = { devInfo.ConfigurationVersion, devInfo.HwVersion, 
                             devInfo.Title, devInfo.MinConfigurationVersion, devInfo.FmType };
 
-            if (ContainsKeys(stringData, keys))
+            if (ContainsKeys(data.GetStringTypeKeys(), keys))
             {
-                PrintDeviceConfigInfo(stringData, path);
+                PrintDeviceConfigInfo(data.GetStringTypeKeys(), path);
             }
         }
 
@@ -183,15 +139,9 @@ namespace ParameterComparison
         /// <param name="targetData"></param>
         public void ViewParameterList(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            Dictionary<string, string> stringSourceData = GetStringTypeKeys(sourceData);
-            Dictionary<string, string> stringTargetData = GetStringTypeKeys(targetData);
-
-            Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
-            Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
-
             PrintColumnNames();
-            PrintStringTypeIdData(stringSourceData, stringTargetData);
-            PrintIntTypeIdData(intSourceData, intTargetData);
+            PrintStringTypeIdData(sourceData.GetStringTypeKeys().RemovedDeviceInfo(), targetData.GetStringTypeKeys().RemovedDeviceInfo());
+            PrintIntTypeIdData(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
         }
 
         /// <summary>
@@ -201,10 +151,7 @@ namespace ParameterComparison
         /// <param name="targetData"></param>
         public void ViewComparisonResultsSummary(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
-            Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
-
-            ResultDictionaries resultDictionaries = CompareConfigurations(intSourceData, intTargetData);
+            ResultDictionaries resultDictionaries = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
             ResultCount count = new();
 
@@ -218,14 +165,13 @@ namespace ParameterComparison
 
         public void FilterParametersById(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string value)
         {
-            Dictionary<int, string> intSourceData = GetIntTypeKeys(sourceData);
-            Dictionary<int, string> intTargetData = GetIntTypeKeys(targetData);
+            ResultDictionaries resultDictionaries = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
-            ResultDictionaries resultDictionaries = CompareConfigurations(intSourceData, intTargetData);
+            Dictionary<int, string> combinedComparedData = CombineDictionaries(resultDictionaries);
 
-            Dictionary<int, string> comparedData = CombineDictionaries(resultDictionaries);
+            // Found keys
+            combinedComparedData.SearchForValue(value);
 
-            List<string> foundKeys = SearchForValue(comparedData, value);
         }
 
         public Dictionary<int, string> CombineDictionaries(ResultDictionaries dictionaries)
@@ -241,66 +187,31 @@ namespace ParameterComparison
             return comparedData;
         }
 
-        /// <summary>
-        /// Method searches of a specific key value in a list of keys.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="value"></param>
-        /// <returns> If search went well, returns a list of string type keys, 
-        /// otherwise - an empty list. </returns>
-        public List<string> SearchForValue(Dictionary<int, string> data, string value)
-        {
-            List<string> keys = GetKeysAsStrings(data);
-            string enteredVal = value.ToString();
-
-            List<string> foundKeys = new();
-
-            bool found;
-
-            foreach(var key in keys)
-            {
-                found = key.StartsWith(enteredVal, false, CultureInfo.InvariantCulture);
-
-                if (found)
-                {
-                    foundKeys.Add(key);
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            return foundKeys;
-        }
-
-        /// <summary>
-        /// Method gets integer type key values from given dictionary and converts it to 
-        /// a list of strings.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> If convertion went well, returns a list of string type keys, 
-        /// otherwise - an empty list. </returns>
-        public List<string> GetKeysAsStrings(Dictionary<int, string> data)
-        {
-            Dictionary<int, string>.KeyCollection dataKeys = data.Keys;
-
-            List<int> intListOfKeys = dataKeys.ToList();
-            List<string> stringListOfKeys = new();
-
-            intListOfKeys.ForEach(i => stringListOfKeys.Add(i.ToString()));
-
-            return stringListOfKeys;
-        }
-
         public void ViewFilteredParameters(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
             
         }
 
-        public void ViewParametersByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        public void ViewParamByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
         {
-            
+            ResultDictionaries result = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+
+            switch (choice)
+            {
+                case "U":
+
+                    break;
+                case "M":
+
+                    break;
+                case "R":
+
+                    break;
+                case "A":
+
+                    break;
+
+            }
         }
     }
 }

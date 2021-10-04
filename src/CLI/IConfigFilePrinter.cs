@@ -12,6 +12,6 @@ namespace ParameterComparison
         void ViewParameterList(Dictionary<string, string> sourceData, Dictionary<string, string> targetData);
         void ViewComparisonResultsSummary(Dictionary<string, string> sourceData, Dictionary<string, string> targetData);
         void ViewFilteredParameters(Dictionary<string, string> sourceData, Dictionary<string, string> targetData);
-        void ViewParametersByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData);
+        void ViewParamByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice);
     }
 }

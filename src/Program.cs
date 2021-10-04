@@ -17,7 +17,9 @@ namespace ParameterComparison
             configPrinter.ViewDeviceConfigInfo(sourceData, sourcePath);
             configPrinter.ViewDeviceConfigInfo(targetData, targetPath);
 
-            //configPrinter.ViewParameterList(sourceData, targetData);
+            //string choice = "M";
+            configPrinter.ViewParameterList(sourceData, targetData);
+            //configPrinter.ViewParametersByComparisonResult(sourceData, targetData, choice);
         }
     }
 }
