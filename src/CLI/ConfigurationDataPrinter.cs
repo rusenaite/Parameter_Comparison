@@ -151,5 +151,21 @@ namespace ParameterComparison
                               count.unchanged, count.modified,
                               count.removed, count.added);
         }
+
+        public static void PrintComparedData(List<ComparedParam> comparedData)
+        {
+            foreach(ComparedParam pair in comparedData)
+            {
+                PrintComparedPair(pair);
+            }
+        }
+
+        public static void PrintComparedPair(ComparedParam pair)
+        {
+            Console.BackgroundColor = pair.Color;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t\t\t{3}", pair.Action, pair.SourcePair.Key, pair.SourcePair.Value, pair.TargetPair.Value);
+            Console.ResetColor();
+        }
     }
 }

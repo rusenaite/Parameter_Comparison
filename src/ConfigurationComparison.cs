@@ -112,6 +112,82 @@ namespace ParameterComparison
             return results;
         }
 
+        public static List<ComparedParam> CompareConfig(Dictionary<int, string> intSrcData, Dictionary<int, string> intTrgData)
+        {
+            List<ComparedParam> resultsList = new List<ComparedParam>();
+
+            foreach (var srcPair in intSrcData)
+            {
+                foreach (var trgPair in intTrgData)
+                {
+                    if (srcPair.Key > trgPair.Key)
+                    {
+                        continue;
+                    }
+
+                    if (srcPair.Key == trgPair.Key)
+                    {
+                        if (srcPair.Value == trgPair.Value)
+                        {
+                            ComparedParam pair = SetComparedPair(srcPair, trgPair, "U", ConsoleColor.Gray);
+                            resultsList.Add(pair);
+
+                            break;
+                        }
+                        else if (srcPair.Value != trgPair.Value
+                            && intSrcData.ContainsKey(trgPair.Key)
+                            && intTrgData.ContainsKey(srcPair.Key))
+                        {
+                            ComparedParam pair = SetComparedPair(srcPair, trgPair, "M", ConsoleColor.Yellow);
+                            resultsList.Add(pair);
+
+                            break;
+                        }
+                    }
+
+                    else if (intSrcData.ContainsKey(trgPair.Key) && !intTrgData.ContainsKey(srcPair.Key))
+                    {
+                        ComparedParam pair = SetComparedPair(srcPair, trgPair, "R", ConsoleColor.Red);
+                        resultsList.Add(pair);
+
+                        break;
+                    }
+
+                    else if (!intSrcData.ContainsKey(trgPair.Key) && intTrgData.ContainsKey(srcPair.Key))
+                    {
+                        ComparedParam pair = SetComparedPair(srcPair, trgPair, "A", ConsoleColor.Green);
+                        resultsList.Add(pair);
+                    }
+                }
+            }
+
+            return resultsList;
+        }
+
+        
+        public static ComparedParam SetComparedPair(KeyValuePair<int, string> sourcePair,
+                                                    KeyValuePair<int, string> targetPair, string action,
+                                                    ConsoleColor color)
+        {
+            ComparedParam pair = new ComparedParam();
+
+            if (sourcePair.Value != null)
+            {
+                pair.SourcePair = sourcePair;
+            }
+
+            if (targetPair.Value != null)
+            {
+                pair.TargetPair = targetPair;
+            }
+
+            pair.Action = action;
+            pair.Color = color;
+
+            return pair;
+        }
+        
+
         public static bool ContainsKeys(Dictionary<string, string> data, string[] keys)
         {
             return keys.Any() && keys.All(data.ContainsKey);
@@ -163,55 +239,105 @@ namespace ParameterComparison
             PrintComparisonResultsSummary(count);
         }
 
-        public void FilterParametersById(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string value)
+        /// <summary>
+        /// Method prints filtered parameters by a given key value (filter).
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        /// <param name="filter"></param>
+        public void ViewFilteredParameters(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string filter)
         {
-            ResultDictionaries resultDictionaries = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+            List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+            List<ComparedParam> foundParamList = SearchForValue(list, filter);
 
-            Dictionary<int, string> combinedComparedData = CombineDictionaries(resultDictionaries);
-
-            // Found keys
-            combinedComparedData.SearchForValue(value);
-
+            PrintComparedData(foundParamList);
         }
 
-        public Dictionary<int, string> CombineDictionaries(ResultDictionaries dictionaries)
+        /// <summary>
+        /// Method searches of a specific key value in a list of keys.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="value"></param>
+        /// <returns> If search went well, returns a data list that contain required key values, 
+        /// otherwise - an empty list. </returns>
+        public static List<ComparedParam> SearchForValue(List<ComparedParam> data, string value)
         {
-            var d1 = dictionaries.unchanged.Keys;
-            var d2 = dictionaries.modified.Keys;
-            var d3 = dictionaries.removed;
-            var d4 = dictionaries.added;
+            List<int> sourceKeys = new();
+            List<int> targetKeys = new();
 
-            Dictionary<int, string> comparedData = d1.Concat(d2).Concat(d3).Concat(d4).GroupBy(d => d.Key)
-                                                .ToDictionary(d => d.Key, d => d.First().Value);
+            // get all keys
+            foreach(var item in data)
+            {
+                sourceKeys.Add(item.SourcePair.Key);
+                targetKeys.Add(item.TargetPair.Key);
+            }
 
-            return comparedData;
+            // combine src and trg keys in one list (no duplicates)
+            List<int> allIntKeys = sourceKeys.Union(targetKeys).ToList();
+            List<string> keysAsStrings = GetKeysAsStrings(allIntKeys);
+            List<string> foundKeyList = new();
+
+            // search for value
+            bool found;
+
+            foreach (var key in keysAsStrings)
+            {
+                found = key.StartsWith(value, false, CultureInfo.InvariantCulture);
+
+                if (found)
+                {
+                    foundKeyList.Add(key);
+                }
+            }
+
+            // convert to int key list
+            List<int> intList = foundKeyList.Select(key => Convert.ToInt32(key)).ToList();
+            List<ComparedParam> foundPairs = new();
+
+            // find keys in data that were found by filter value
+            foreach (var item in data)
+            {
+                for (int i = 0; i < intList.Count; ++i)
+                {
+                    if (item.SourcePair.Key == intList[i] || item.TargetPair.Key == intList[i])
+                    {
+                        foundPairs.Add(item);
+                        break;
+                    }
+                }
+            }
+
+            return foundPairs;
         }
 
-        public void ViewFilteredParameters(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        /// <summary>
+        /// Method gets an integer type list of keys and converts it to 
+        /// a list of strings.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns> If convertion went well, returns a list of string type keys, 
+        /// otherwise - an empty list. </returns>
+        public static List<string> GetKeysAsStrings(List<int> keys)
         {
-            
+            List<string> stringListOfKeys = new();
+
+            keys = keys.ToList();
+            keys.ForEach(i => stringListOfKeys.Add(i.ToString()));
+
+            return stringListOfKeys;
         }
 
         public void ViewParamByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
         {
             ResultDictionaries result = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
-            switch (choice)
+            List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+
+            list.Where(pair => pair.Action == choice && pair.Action.Any()).ToList().ForEach(p =>
             {
-                case "U":
+                PrintComparedPair(p);
+            });
 
-                    break;
-                case "M":
-
-                    break;
-                case "R":
-
-                    break;
-                case "A":
-
-                    break;
-
-            }
         }
     }
 }
