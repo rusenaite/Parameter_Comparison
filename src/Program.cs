@@ -11,22 +11,11 @@ namespace ParameterComparison
         static void Main()
         {
             Dictionary<string, string> sourceData = FileReader.ReadGZippedFiles(sourcePath);
-            Dictionary<string, string> targetData = FileReader.ReadGZippedFiles(targetPath);
+            Dictionary<string, string> targetData = FileReader.ReadGZippedFiles(targetPath);    
 
-            IConfigFilePrinter configPrinter = new ConfigurationComparison();
-
-            configPrinter.ViewDeviceConfigInfo(sourceData, sourcePath);
-            configPrinter.ViewDeviceConfigInfo(targetData, targetPath);
-
-            //configPrinter.ViewParameterList(sourceData, targetData);
-
-            //configPrinter.ViewComparisonResultsSummary(sourceData, targetData);
-
-            string filter = "40";
-            //configPrinter.ViewFilteredParameters(sourceData, targetData, filter);
-
-            string choice = "M";
-            configPrinter.ViewParamByComparisonResult(sourceData, targetData, choice);
+            InputManager manager = new InputManager(sourceData, targetData);
+            manager.StartProgram();
+            
         }
     }
 }
