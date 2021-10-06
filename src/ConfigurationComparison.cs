@@ -331,22 +331,13 @@ namespace ParameterComparison
         {
             ResultDictionaries result = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
-            switch (choice)
+            List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+
+            list.Where(pair => pair.Action == choice && pair.Action.Any()).ToList().ForEach(p =>
             {
-                case "U":
+                PrintComparedPair(p);
+            });
 
-                    break;
-                case "M":
-
-                    break;
-                case "R":
-
-                    break;
-                case "A":
-
-                    break;
-
-            }
         }
     }
 }

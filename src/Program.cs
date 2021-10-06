@@ -23,10 +23,10 @@ namespace ParameterComparison
             //configPrinter.ViewComparisonResultsSummary(sourceData, targetData);
 
             string filter = "40";
-            configPrinter.ViewFilteredParameters(sourceData, targetData, filter);
+            //configPrinter.ViewFilteredParameters(sourceData, targetData, filter);
 
-            //string filter = "M";
-            //configPrinter.ViewParametersByComparisonResult(sourceData, targetData, filter);
+            string choice = "M";
+            configPrinter.ViewParamByComparisonResult(sourceData, targetData, choice);
         }
     }
 }

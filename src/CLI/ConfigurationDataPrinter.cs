@@ -156,11 +156,16 @@ namespace ParameterComparison
         {
             foreach(ComparedParam pair in comparedData)
             {
-                Console.BackgroundColor = pair.Color;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t\t\t{3}", pair.Action, pair.SourcePair.Key, pair.SourcePair.Value, pair.TargetPair.Value);
-                Console.ResetColor();
+                PrintComparedPair(pair);
             }
+        }
+
+        public static void PrintComparedPair(ComparedParam pair)
+        {
+            Console.BackgroundColor = pair.Color;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t\t\t{3}", pair.Action, pair.SourcePair.Key, pair.SourcePair.Value, pair.TargetPair.Value);
+            Console.ResetColor();
         }
     }
 }
