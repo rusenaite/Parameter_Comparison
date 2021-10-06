@@ -76,52 +76,7 @@ namespace ParameterComparison
             return stringData;
         }
 
-        /// <summary>
-        /// Method searches of a specific key value in a list of keys.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="value"></param>
-        /// <returns> If search went well, returns a list of string type keys, 
-        /// otherwise - an empty list. </returns>
-        public static List<string> SearchForValue(this Dictionary<int, string> data, string value)
-        {
-            string enteredVal = value.ToString();
-
-            List<string> foundKeys = new();
-
-            bool found;
-
-            foreach (var key in data.GetKeysAsStrings())
-            {
-                found = key.StartsWith(enteredVal, false, CultureInfo.InvariantCulture);
-
-                if (found)
-                {
-                    foundKeys.Add(key);
-                }
-            }
-
-            return foundKeys;
-        }
-
-        /// <summary>
-        /// Method gets integer type key values from given dictionary and converts it to 
-        /// a list of strings.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> If convertion went well, returns a list of string type keys, 
-        /// otherwise - an empty list. </returns>
-        public static List<string> GetKeysAsStrings(this Dictionary<int, string> data)
-        {
-            Dictionary<int, string>.KeyCollection dataKeys = data.Keys;
-
-            List<int> intListOfKeys = dataKeys.ToList();
-            List<string> stringListOfKeys = new();
-
-            intListOfKeys.ForEach(i => stringListOfKeys.Add(i.ToString()));
-
-            return stringListOfKeys;
-        }
+        
 
     }
 }
