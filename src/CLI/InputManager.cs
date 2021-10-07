@@ -14,8 +14,8 @@ namespace ParameterComparison
         private Dictionary<string, string> sourceData;
         private Dictionary<string, string> targetData;
 
-        private string sourcePath;
-        private string targetPath;
+        private readonly string sourcePath;
+        private readonly string targetPath;
 
         private readonly string defaultLetter = "U";
         private readonly int defaultAction = 0;
@@ -151,30 +151,29 @@ namespace ParameterComparison
         public void MakeAction(int userChoice)
         {
             IConfigFilePrinter configPrinter = new ConfigurationComparison();
-            //configPrinter.ViewDeviceConfigInfo(sourceData, sourcePath);
-            //configPrinter.ViewDeviceConfigInfo(targetData, targetPath);
+            configPrinter.ViewDeviceConfigInfo(sourceData, sourcePath);
+            configPrinter.ViewDeviceConfigInfo(targetData, targetPath);
 
             switch (userChoice)
-                {
-                    case 0:
-                        configPrinter.ViewParameterList(sourceData, targetData);
-                        break;
-                    case 1:
-                        configPrinter.ViewComparisonResultsSummary(sourceData, targetData);
-                        break;
-                    case 2:
-                        string idFilter = GetIdFilter();
-                        configPrinter.ViewFilteredParameters(sourceData, targetData, idFilter);
-
+            {
+                case 0:
+                    configPrinter.ViewParameterList(sourceData, targetData);
                     break;
-                    case 3:
-                        InterfacePrinter printer = new();
-                        InterfacePrinter.PrintComparisonResultChoices();
-
-                        string letterFilter = GetLetterFilter();
-                        configPrinter.ViewParamByComparisonResult(sourceData, targetData, letterFilter);
+                case 1:
+                    configPrinter.ViewComparisonResultsSummary(sourceData, targetData);
                     break;
-                }
+                case 2:
+                    string idFilter = GetIdFilter();
+                    configPrinter.ViewFilteredParameters(sourceData, targetData, idFilter);
+                    break;
+                case 3:
+                    InterfacePrinter printer = new();
+                    InterfacePrinter.PrintComparisonResultChoices();
+
+                    string letterFilter = GetLetterFilter();
+                    configPrinter.ViewParamByComparisonResult(sourceData, targetData, letterFilter);
+                    break;
+            }
         }
 
     }

@@ -262,22 +262,9 @@ namespace ParameterComparison
         /// otherwise - an empty list. </returns>
         public static List<ComparedParam> SearchForValue(List<ComparedParam> data, string value)
         {
-            List<int> sourceKeys = new();
-            List<int> targetKeys = new();
-
-            // get all keys
-            foreach(var item in data)
-            {
-                sourceKeys.Add(item.SourcePair.Key);
-                targetKeys.Add(item.TargetPair.Key);
-            }
-
-            // combine src and trg keys in one list (no duplicates)
-            List<int> allIntKeys = sourceKeys.Union(targetKeys).ToList();
-            List<string> keysAsStrings = GetKeysAsStrings(allIntKeys);
+            List<string> keysAsStrings = data.GetKeys().GetKeysAsStrings();
             List<string> foundKeyList = new();
 
-            // search for value
             bool found;
 
             foreach (var key in keysAsStrings)
@@ -290,16 +277,21 @@ namespace ParameterComparison
                 }
             }
 
-            // convert to int key list
-            List<int> intList = foundKeyList.Select(key => Convert.ToInt32(key)).ToList();
+            List<int> intList = foundKeyList.GetKeysAsIntegers();
+            List<ComparedParam> foundPairs = FindDataByKeys(data, intList);
+
+            return foundPairs;
+        }
+
+        public static List<ComparedParam> FindDataByKeys(List<ComparedParam> data, List<int> keyList)
+        {
             List<ComparedParam> foundPairs = new();
 
-            // find keys in data that were found by filter value
             foreach (var item in data)
             {
-                for (int i = 0; i < intList.Count; ++i)
+                for (int i = 0; i < keyList.Count; ++i)
                 {
-                    if (item.SourcePair.Key == intList[i] || item.TargetPair.Key == intList[i])
+                    if (item.SourcePair.Key == keyList[i] || item.TargetPair.Key == keyList[i])
                     {
                         foundPairs.Add(item);
                         break;
@@ -308,23 +300,6 @@ namespace ParameterComparison
             }
 
             return foundPairs;
-        }
-
-        /// <summary>
-        /// Method gets an integer type list of keys and converts it to 
-        /// a list of strings.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> If convertion went well, returns a list of string type keys, 
-        /// otherwise - an empty list. </returns>
-        public static List<string> GetKeysAsStrings(List<int> keys)
-        {
-            List<string> stringListOfKeys = new();
-
-            keys = keys.ToList();
-            keys.ForEach(i => stringListOfKeys.Add(i.ToString()));
-
-            return stringListOfKeys;
         }
 
         public void ViewParamByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
