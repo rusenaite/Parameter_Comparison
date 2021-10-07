@@ -142,9 +142,11 @@ namespace ParameterComparison
         /// <param name="targetData"></param>
         public void ViewParameterList(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
+            List<ComparedParam> comparedData = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+
             PrintColumnNames();
             PrintStringTypeIdData(sourceData.GetStringTypeKeys().RemovedDeviceInfo(), targetData.GetStringTypeKeys().RemovedDeviceInfo());
-            PrintIntTypeIdData(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+            PrintComparedData(comparedData);
         }
 
         /// <summary>
@@ -175,6 +177,7 @@ namespace ParameterComparison
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
             List<ComparedParam> foundParamList = SearchForValue(list, filter);
 
+            PrintColumnNames();
             PrintComparedData(foundParamList);
         }
 
@@ -243,6 +246,8 @@ namespace ParameterComparison
         public void ViewParamByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+
+            PrintColumnNames();
 
             list.Where(pair => pair.Action == choice && pair.Action.Any()).ToList().ForEach(p =>
             {
