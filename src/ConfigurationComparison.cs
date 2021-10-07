@@ -9,116 +9,24 @@ namespace ParameterComparison
 {
     public class ConfigurationComparison : ConfigurationDataPrinter, IConfigFilePrinter
     {
-        public struct ResultCount
-        {
-            public int unchanged;
-            public int modified;
-            public int removed;
-            public int added;
-        }
 
-        public struct ResultDictionaries
-        {
-            public Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> unchanged;
-            public Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> modified;
-            public Dictionary<int, string> removed;
-            public Dictionary<int, string> added;
-        }
+        public (string result, int count)[] resultCount = new [] { ("U", 0), ("M", 0), ("R", 0), ("A", 0) };
 
         /// <summary>
-        /// Method checks if the data is equal, and if it is, prints all configuration
-        /// data marked as "Unchanged".
+        /// Method compares integer-key-type source and target data and based on comparison
+        /// result, puts results into a list of ComparedParam objects.
         /// </summary>
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
-        public static bool CheckForEqualData(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
-        {
-            if (sourceData != targetData)
-            {
-                return false;
-            }
-            else
-            {
-                foreach (var srcPair in sourceData)
-                {
-                    foreach (var trgPair in targetData)
-                    {
-                        if (srcPair.Key > trgPair.Key)
-                        {
-                            continue;
-                        }
-
-                        if (srcPair.Key == trgPair.Key)
-                        {
-                            PrintAsUnchanged("U", srcPair, trgPair);
-                        }
-                    }
-                }
-                return true;
-            }
-        }
-
-        public static ResultDictionaries CompareConfigurations(Dictionary<int, string> intSrcData, Dictionary<int, string> intTrgData)
-        {
-            Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> unchanged = new();
-            Dictionary<KeyValuePair<int, string>, KeyValuePair<int, string>> modified = new();
-            Dictionary<int, string> removed = new();
-            Dictionary<int, string> added = new();
-
-            foreach (var srcPair in intSrcData)
-            {
-                foreach (var trgPair in intTrgData)
-                {
-                    if (srcPair.Key > trgPair.Key)
-                    {
-                        continue;
-                    }
-
-                    if (srcPair.Key == trgPair.Key)
-                    {
-                        if (srcPair.Value == trgPair.Value)
-                        {
-                            unchanged.Add(srcPair, trgPair);
-                            break;
-                        }
-                        else if (srcPair.Value != trgPair.Value
-                            && intSrcData.ContainsKey(trgPair.Key)
-                            && intTrgData.ContainsKey(srcPair.Key))
-                        {
-                            modified.Add(srcPair, trgPair);
-                            break;
-                        }
-                    }
-
-                    else if (intSrcData.ContainsKey(trgPair.Key) && !intTrgData.ContainsKey(srcPair.Key))
-                    {
-                        removed.Add(srcPair.Key, srcPair.Value);
-                        break;
-                    }
-
-                    else if (!intSrcData.ContainsKey(trgPair.Key) && intTrgData.ContainsKey(srcPair.Key))
-                    {
-                        added.Add(trgPair.Key, trgPair.Value);
-                    }
-                }
-            }
-
-            ResultDictionaries results = new();
-            results.unchanged = unchanged;
-            results.modified = modified;
-            results.removed = removed;
-            results.added = added;
-
-            return results;
-        }
-
-        public static List<ComparedParam> CompareConfig(Dictionary<int, string> intSrcData, Dictionary<int, string> intTrgData)
+        /// <returns> If comparison went well, returns a list of compared parameters, 
+        /// otherwise - returns an empty list. </returns>
+        public static List<ComparedParam> CompareConfig(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
         {
             List<ComparedParam> resultsList = new List<ComparedParam>();
 
-            foreach (var srcPair in intSrcData)
+            foreach (var srcPair in sourceData)
             {
-                foreach (var trgPair in intTrgData)
+                foreach (var trgPair in targetData)
                 {
                     if (srcPair.Key > trgPair.Key)
                     {
@@ -135,8 +43,8 @@ namespace ParameterComparison
                             break;
                         }
                         else if (srcPair.Value != trgPair.Value
-                            && intSrcData.ContainsKey(trgPair.Key)
-                            && intTrgData.ContainsKey(srcPair.Key))
+                            && sourceData.ContainsKey(trgPair.Key)
+                            && targetData.ContainsKey(srcPair.Key))
                         {
                             ComparedParam pair = SetComparedPair(srcPair, trgPair, "M", ConsoleColor.Yellow);
                             resultsList.Add(pair);
@@ -145,7 +53,7 @@ namespace ParameterComparison
                         }
                     }
 
-                    else if (intSrcData.ContainsKey(trgPair.Key) && !intTrgData.ContainsKey(srcPair.Key))
+                    else if (sourceData.ContainsKey(trgPair.Key) && !targetData.ContainsKey(srcPair.Key))
                     {
                         ComparedParam pair = SetComparedPair(srcPair, trgPair, "R", ConsoleColor.Red);
                         resultsList.Add(pair);
@@ -153,7 +61,7 @@ namespace ParameterComparison
                         break;
                     }
 
-                    else if (!intSrcData.ContainsKey(trgPair.Key) && intTrgData.ContainsKey(srcPair.Key))
+                    else if (!sourceData.ContainsKey(trgPair.Key) && targetData.ContainsKey(srcPair.Key))
                     {
                         ComparedParam pair = SetComparedPair(srcPair, trgPair, "A", ConsoleColor.Green);
                         resultsList.Add(pair);
@@ -164,7 +72,15 @@ namespace ParameterComparison
             return resultsList;
         }
 
-        
+        /// <summary>
+        /// Method creates a ComparedParam object of compared pair data.
+        /// </summary>
+        /// <param name="sourcePair"></param>
+        /// <param name="targetPair"></param>
+        /// <param name="action"></param>
+        /// <param name="color"></param>
+        /// <returns> If object generation went well, returns a ComparedParam object,
+        /// otherwise - an empty ComparedParam object.</returns>
         public static ComparedParam SetComparedPair(KeyValuePair<int, string> sourcePair,
                                                     KeyValuePair<int, string> targetPair, string action,
                                                     ConsoleColor color)
@@ -187,12 +103,23 @@ namespace ParameterComparison
             return pair;
         }
         
-
+        /// <summary>
+        /// Method checks whether the passed dictionary contains specific keys.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <returns> If dictionary contains specified keys - returns true, otherwise - 
+        /// returns false. </returns>
         public static bool ContainsKeys(Dictionary<string, string> data, string[] keys)
         {
             return keys.Any() && keys.All(data.ContainsKey);
         }
 
+        /// <summary>
+        /// Method prints device configuration information.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="path"></param>
         public void ViewDeviceConfigInfo(Dictionary<string, string> data, string path)
         {
             data.GetStringTypeKeys();
@@ -221,22 +148,20 @@ namespace ParameterComparison
         }
 
         /// <summary>
-        /// Method prints comparison result summary.
+        /// Method allows to print comparison result summary.
         /// </summary>
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
         public void ViewComparisonResultsSummary(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            ResultDictionaries resultDictionaries = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+            List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
-            ResultCount count = new();
+            for (int i = 0; i < resultCount.Length; ++i)
+            {
+                resultCount[i].count = list.Where(pair => pair.Action == resultCount[i].result && pair.Action.Any()).Count();
+            }
 
-            count.unchanged = resultDictionaries.unchanged.Count;
-            count.modified = resultDictionaries.modified.Count;
-            count.removed = resultDictionaries.removed.Count;
-            count.added = resultDictionaries.added.Count;
-
-            PrintComparisonResultsSummary(count);
+            PrintComparisonResultsSummary(resultCount);
         }
 
         /// <summary>
@@ -283,6 +208,13 @@ namespace ParameterComparison
             return foundPairs;
         }
 
+        /// <summary>
+        /// Method searches for parameter data that contains keys from provided keyList.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="keyList"></param>
+        /// <returns> If search went well, returns a list of data that contains provided
+        /// keys, otherwise - an empty list.</returns>
         public static List<ComparedParam> FindDataByKeys(List<ComparedParam> data, List<int> keyList)
         {
             List<ComparedParam> foundPairs = new();
@@ -302,17 +234,20 @@ namespace ParameterComparison
             return foundPairs;
         }
 
+        /// <summary>
+        /// Method allows printing parameters of selected comparison result.
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        /// <param name="choice"></param>
         public void ViewParamByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
         {
-            ResultDictionaries result = CompareConfigurations(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
-
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
             list.Where(pair => pair.Action == choice && pair.Action.Any()).ToList().ForEach(p =>
             {
                 PrintComparedPair(p);
             });
-
         }
     }
 }

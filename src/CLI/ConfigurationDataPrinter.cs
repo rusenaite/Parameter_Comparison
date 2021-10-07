@@ -145,11 +145,16 @@ namespace ParameterComparison
             }
         }
 
-        public static void PrintComparisonResultsSummary(ResultCount count)
+        /// <summary>
+        /// Method prints summary of provided calculated comparison results.
+        /// </summary>
+        /// <param name="count"></param>
+        public static void PrintComparisonResultsSummary((string result, int count)[] count)
         {
-            Console.WriteLine("U:{0} M:{1} R:{2} A:{3}",
-                              count.unchanged, count.modified,
-                              count.removed, count.added);
+            count.Where(item => item.result != null && item.result.Any() && count != null).ToList().ForEach(tuple =>
+            {
+                Console.Write($"{tuple.result}:{tuple.count} ");
+            });
         }
 
         public static void PrintComparedData(List<ComparedParam> comparedData)
