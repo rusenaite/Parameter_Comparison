@@ -11,11 +11,9 @@ namespace ParameterComparison
         public const string configVersion = "ConfigurationVersion";
         public const string hwVersion = "HwVersion";
         public const string title = "Title";
-        public const string minConfiguration = "MinConfiguratorVersion";
+        public const string minConfiguration = "MinConfigurationVersion";
         public const string fmType = "FmType";
         public const string specId = "SpecId";
-
-        public DeviceInfo() { }
 
         public string ConfigurationVersion { get => configVersion; }
         public string HwVersion { get => hwVersion; }
