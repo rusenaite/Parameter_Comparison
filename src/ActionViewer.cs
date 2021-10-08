@@ -9,6 +9,31 @@ namespace ParameterComparison
     public class ActionViewer : ConfigurationComparison, IConfigFilePrinter
     {
         /// <summary>
+        /// Method prints main menu with actions for user to choose from.
+        /// </summary>
+        public void PrintMainMenu()
+        {
+            Console.WriteLine(@"Select action You would like to perform:" +
+                                "\n[0] View parameter's list" +
+                                "\n[1] Summary of results" +
+                                "\n[2] Filter parameters by entered ID" +
+                                "\n[3] Filter parameters by comparison result" +
+                                "\n\nEnter your choice (number from interval [ 0 ; 3 ]:");
+        }
+
+        /// <summary>
+        /// Method prints comparison result choices for user to choose from.
+        /// </summary>
+        public void PrintComparisonResultChoices()
+        {
+            Console.WriteLine(@"Select action You would like to perform:" +
+                                "\n[U] Unchanged" +
+                                "\n[A] Added" +
+                                "\n[M] Modified" +
+                                "\n[R] Removed" +
+                                "\n\nEnter your choice (one of 4 capital letters):");
+        }
+        /// <summary>
         /// Method prints device configuration information.
         /// </summary>
         /// <param name="data"></param>
@@ -70,8 +95,16 @@ namespace ParameterComparison
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
             List<ComparedParam> foundParamList = SearchForValue(list, filter);
 
-            PrintColumnNames();
-            PrintComparedData(foundParamList);
+            if (!foundParamList.Any())
+            {
+                Console.Error.WriteLine("\n\nCompared data does not contain parameters with entered ID value.");
+            }
+            else
+            {
+                PrintColumnNames();
+                PrintComparedData(foundParamList);
+            }
+                
         }
 
         /// <summary>
@@ -84,12 +117,17 @@ namespace ParameterComparison
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
-            PrintColumnNames();
+            List<ComparedParam> chosenList = list.Where(pair => pair.Action == choice && pair.Action.Any()).ToList();
 
-            list.Where(pair => pair.Action == choice && pair.Action.Any()).ToList().ForEach(p =>
+            if (!chosenList.Any())
             {
-                PrintComparedPair(p);
-            });
+                Console.Error.WriteLine("\n\nCompared data does not contain parameters with selected comparison result.");
+            }
+            else
+            {
+                PrintColumnNames();
+                PrintComparedData(chosenList);
+            }
         }
     }
 }

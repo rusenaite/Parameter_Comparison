@@ -35,12 +35,11 @@ namespace ParameterComparison
 
         public void StartProgram()
         {
-            IConfigFilePrinter configPrinter = new ActionViewer();
-            configPrinter.ViewDeviceConfigInfo(sourceData, sourcePath);
-            configPrinter.ViewDeviceConfigInfo(targetData, targetPath);
+            IConfigFilePrinter printer = new ActionViewer();
+            printer.ViewDeviceConfigInfo(sourceData, sourcePath);
+            printer.ViewDeviceConfigInfo(targetData, targetPath);
 
-            InterfacePrinter printer = new InterfacePrinter();
-            InterfacePrinter.PrintMainMenu();
+            printer.PrintMainMenu();
 
             int choice = GetActionChoice();
             MakeAction(choice);
@@ -57,7 +56,7 @@ namespace ParameterComparison
 
             while (!IsValidIntInRage(userChoice))
             {
-                Console.Error.Write("Error: Unavailable choice entered. Re-enter your choice: ");
+                Console.Error.Write("[ Error ]: Unavailable choice entered. Re-enter your choice: ");
                 userChoice = Console.ReadLine();
             }
 
@@ -81,7 +80,7 @@ namespace ParameterComparison
 
             while (!IsInt(userInput))
             {
-                Console.Error.Write("Error: Unavailable choice entered. Re-enter your choice: ");
+                Console.Error.Write("[ Error ]: Unavailable choice entered. Re-enter your choice: ");
                 userInput = Console.ReadLine();
             }
 
@@ -108,7 +107,7 @@ namespace ParameterComparison
 
                 while (!IsRequiredLetter(userInput))
                 {
-                    Console.Error.Write("Error: Unavailable input entered. Re-enter your input: ");
+                    Console.Error.Write("[ Error ]: Unavailable input entered. Re-enter your input: ");
                     userInput = Console.ReadLine();
                 }
 
@@ -154,26 +153,25 @@ namespace ParameterComparison
 
         public void MakeAction(int userChoice)
         {
-            IConfigFilePrinter configPrinter = new ActionViewer();
+            IConfigFilePrinter printer = new ActionViewer();
 
             switch (userChoice)
             {
                 case 0:
-                    configPrinter.ViewParameterList(sourceData, targetData);
+                    printer.ViewParameterList(sourceData, targetData);
                     break;
                 case 1:
-                    configPrinter.ViewComparisonResultsSummary(sourceData, targetData);
+                    printer.ViewComparisonResultsSummary(sourceData, targetData);
                     break;
                 case 2:
                     string idFilter = GetIdFilter();
-                    configPrinter.ViewFilteredParameters(sourceData, targetData, idFilter);
+                    printer.ViewFilteredParameters(sourceData, targetData, idFilter);
                     break;
                 case 3:
-                    InterfacePrinter printer = new();
-                    InterfacePrinter.PrintComparisonResultChoices();
+                    printer.PrintComparisonResultChoices();
 
                     string letterFilter = GetLetterFilter();
-                    configPrinter.ViewParamByComparisonResult(sourceData, targetData, letterFilter);
+                    printer.ViewParamByComparisonResult(sourceData, targetData, letterFilter);
                     break;
             }
         }
