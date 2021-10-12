@@ -33,6 +33,7 @@ namespace ParameterComparison
                                 "\n[R] Removed" +
                                 "\n\nEnter your choice (one of 4 capital letters):");
         }
+
         /// <summary>
         /// Method prints device configuration information.
         /// </summary>
