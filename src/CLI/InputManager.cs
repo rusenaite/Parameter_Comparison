@@ -10,7 +10,7 @@ namespace ParameterComparison
     {
         public void StartProgram()
         {
-            IConfigFilePrinter printer = new ActionViewer();
+            IActionPrinter printer = new ActionViewer();
             printer.ViewDeviceConfigInfo(sourceData, sourcePath);
             printer.ViewDeviceConfigInfo(targetData, targetPath);
 
@@ -22,7 +22,7 @@ namespace ParameterComparison
 
         public void MakeAction(int userChoice)
         {
-            IConfigFilePrinter printer = new ActionViewer();
+            IActionPrinter printer = new ActionViewer();
 
             switch (userChoice)
             {
