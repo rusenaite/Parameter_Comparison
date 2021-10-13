@@ -10,8 +10,18 @@ namespace ParameterComparison
         public const string targetPath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB920-modified.cfg";
         static void Main()
         {
-            InputManager controller = new InputManager(sourcePath, targetPath);
-            controller.StartProgram();
+            
+            Dictionary<string, string> sourceData = FileReader.ReadGZippedFiles(sourcePath);
+            Dictionary<string, string> targetData = FileReader.ReadGZippedFiles(targetPath);
+
+            
+            IUserInput inputValidator = new InputValidation();
+
+            int actionChoice = inputValidator.GetActionChoice();
+            string idFilter = inputValidator.GetIdFilter();
+            string stateFilter = inputValidator.GetLetterFilter();
+
+
         }
     }
 }
