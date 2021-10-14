@@ -27,20 +27,11 @@ namespace ParameterComparison
         {
             foreach(ComparedParam pair in comparedData)
             {
-                PrintComparedPair(pair);
+                Console.BackgroundColor = pair.Color;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine(pair);
+                Console.ResetColor();
             }
-        }
-
-        /// <summary>
-        /// Method prints compared parameter pair.
-        /// </summary>
-        /// <param name="pair"></param>
-        public static void PrintComparedPair(ComparedParam pair)
-        {
-            Console.BackgroundColor = pair.Color;
-            Console.ForegroundColor = ConsoleColor.Black;
-            Console.Write("\n{0}\t{1}\t\t\t{2}\t\t\t\t\t{3}", pair.Action, pair.SourcePair.Key, pair.SourcePair.Value, pair.TargetPair.Value);
-            Console.ResetColor();
         }
     }
 }

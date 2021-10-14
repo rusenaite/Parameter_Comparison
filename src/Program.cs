@@ -10,7 +10,7 @@ namespace ParameterComparison
         public const string targetPath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB920-modified.cfg";
         static void Main()
         {
- 
+
             Dictionary<string, string> sourceData = FileReader.ReadGZippedFiles(sourcePath);
             Dictionary<string, string> targetData = FileReader.ReadGZippedFiles(targetPath);
 
