@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
+namespace ParameterComparison
 {
-    public class ParametersByCompResultViewer : ConfigurationComparison
+    public class ParametersByCompResultViewer : ConfigurationComparison, ISpecificAction
     {
         /// <summary>
         /// Method allows printing parameters of selected comparison result.
@@ -14,7 +14,7 @@ namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
         /// <param name="choice"></param>
-        public void ViewParamByComparisonResult(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
+        public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 

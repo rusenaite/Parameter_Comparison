@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
+namespace ParameterComparison
 {
-    public class FilteredParamViewer : ConfigurationComparison
+    public class FilteredParamViewer : ConfigurationComparison, ISpecificAction
     {
         /// <summary>
         /// Method prints filtered parameters by a given key value (filter).
@@ -14,7 +14,7 @@ namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
         /// <param name="filter"></param>
-        public void ViewFilteredParameters(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string filter)
+        public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string filter)
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
             List<ComparedParam> foundParamList = SearchForValue(list, filter);
@@ -29,6 +29,5 @@ namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
                 ConfigurationDataPrinter.PrintComparedData(foundParamList);
             }
         }
-
     }
 }

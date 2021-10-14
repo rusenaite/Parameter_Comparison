@@ -5,26 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
+namespace ParameterComparison
 {
-    public class DeviceInfoViewer : ConfigurationComparison
+    public class DeviceInfoViewer : ConfigurationComparison, ISpecificAction
     {
+
         /// <summary>
-        /// Method prints device configuration information.
+        /// Method prints configuration information of source and target devices.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
         /// <param name="path"></param>
-        public static void ViewDeviceConfigInfo(Dictionary<string, string> data, string path)
+        public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string path)
         {
-            data.GetStringTypeKeys();
+            string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
+                              DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
 
-            DeviceInfo devInfo = new DeviceInfo();
-            string[] keys = { devInfo.ConfigurationVersion, devInfo.HwVersion, devInfo.Title,
-                              devInfo.MinConfigurationVersion, devInfo.FmType, devInfo.SpecId };
-
-            if (ContainsKeys(data.GetStringTypeKeys(), keys))
+            if (ContainsKeys(sourceData.GetStringTypeKeys(), keys) && ContainsKeys(targetData.GetStringTypeKeys(), keys))
             {
-                PrintDeviceConfigInfo(data.GetStringTypeKeys(), path);
+                PrintDeviceConfigInfo(sourceData.GetStringTypeKeys(), path);
+                PrintDeviceConfigInfo(targetData.GetStringTypeKeys(), path);
             }
         }
 
@@ -38,16 +38,15 @@ namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
             string fileName = Path.GetFileName(path).ToUpper();
             Console.WriteLine(fileName);
 
-            DeviceInfo devInfo = new();
-            string[] keys = { devInfo.ConfigurationVersion, devInfo.HwVersion, devInfo.Title,
-                            devInfo.MinConfigurationVersion, devInfo.FmType, devInfo.SpecId };
+            string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
+                              DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
 
             int i = 0;
             foreach (var pair in data)
             {
                 if (i < keys.Length && pair.Key == keys[i])
                 {
-                    Console.WriteLine("{0}: {1}", keys[i], pair.Value);
+                    Console.WriteLine($"{keys[i]}: {pair.Value}");
                     ++i;
                 }
             }

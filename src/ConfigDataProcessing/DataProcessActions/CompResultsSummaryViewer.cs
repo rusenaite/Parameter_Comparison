@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
+namespace ParameterComparison
 {
-    public class CompResultsSummaryViewer : ConfigurationComparison
+    public class CompResultsSummaryViewer : ConfigurationComparison, IAction
     {
         /// <summary>
         /// Method allows to print comparison result summary.
         /// </summary>
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
-        public void ViewComparisonResultsSummary(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 

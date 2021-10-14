@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
+namespace ParameterComparison
 {
-    public class ParametersListViewer : ConfigurationComparison
+    public class ParametersListViewer : ConfigurationComparison, IAction
     {
         /// <summary>
         /// Method prints parameter list - paramater ID, value and comparison result of
@@ -14,7 +14,7 @@ namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
         /// </summary>
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
-        public void ViewParameterList(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
+        public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
             List<ComparedParam> comparedData = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
@@ -51,5 +51,6 @@ namespace ParameterComparison.src.ConfigDataProcessing.DataProcessActions
         {
             Console.Write("\n{0}\t{1}\t\t\t\t\t{2}", action, pair.Key, pair.Value);
         }
+
     }
 }
