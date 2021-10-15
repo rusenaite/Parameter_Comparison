@@ -98,7 +98,6 @@ namespace ParameterComparison
             }
 
             pair.Action = action;
-            pair.Color = color;
 
             return pair;
         }

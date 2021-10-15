@@ -18,9 +18,8 @@ namespace ParameterComparison
         {
             List<ComparedParam> comparedData = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
-            ConfigurationDataPrinter.PrintColumnNames();
-            PrintStringTypeIdData(sourceData.GetStringTypeKeys().RemovedDeviceInfo(), targetData.GetStringTypeKeys().RemovedDeviceInfo());
             ConfigurationDataPrinter.PrintComparedData(comparedData);
+            PrintStringTypeIdData(sourceData.GetStringTypeKeys().RemovedDeviceInfo(), targetData.GetStringTypeKeys().RemovedDeviceInfo());
         }
 
         /// <summary>
@@ -31,25 +30,15 @@ namespace ParameterComparison
         /// <param name="targetData"></param>
         public static void PrintStringTypeIdData(Dictionary<string, string> stringSourceData, Dictionary<string, string> stringTargetData)
         {
-            foreach (var srcPair in stringSourceData)
+            stringSourceData.ToList().ForEach(pair =>
             {
-                PrintAsStringTypeIdPair("-", srcPair);
-            }
+                Console.Write("\n".PadRight(Columns.ColumnWidth) + pair.Key.PadRight(Columns.ColumnWidth) + pair.Value.PadRight(Columns.ColumnWidth));
+            });
 
-            foreach (var trgPair in stringTargetData)
+            stringTargetData.ToList().ForEach(pair =>
             {
-                PrintAsStringTypeIdPair("-", trgPair);
-            }
-        }
-
-        /// <summary>
-        /// Method prints string type provided KeyValuePair type ID pair.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="pair"></param>
-        public static void PrintAsStringTypeIdPair(string action, KeyValuePair<string, string> pair)
-        {
-            Console.Write("\n{0}\t{1}\t\t\t\t\t{2}", action, pair.Key, pair.Value);
+                Console.Write("\n".PadRight(Columns.ColumnWidth) + pair.Key.PadRight(Columns.ColumnWidth) + pair.Value.PadRight(Columns.ColumnWidth));
+            });
         }
 
     }

@@ -25,7 +25,6 @@ namespace ParameterComparison
             }
             else
             {
-                ConfigurationDataPrinter.PrintColumnNames();
                 ConfigurationDataPrinter.PrintComparedData(foundParamList);
             }
         }

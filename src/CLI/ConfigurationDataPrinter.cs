@@ -12,26 +12,33 @@ namespace ParameterComparison
     {
 
         /// <summary>
-        /// Method prints column names for configuration data.
-        /// </summary>
-        public static void PrintColumnNames()
-        {
-            Console.Write("\n\n\n{0}\t{1}\t\t\t{2}\t\t\t{3}", "Status", "ID", "Source Value", "Target Value");
-        }
-
-        /// <summary>
         /// Method prints compared data pairs from a list.
         /// </summary>
         /// <param name="comparedData"></param>
         public static void PrintComparedData(List<ComparedParam> comparedData)
         {
-            foreach(ComparedParam pair in comparedData)
+            Console.WriteLine(new Columns().ToString());
+
+            foreach (ComparedParam pair in comparedData)
             {
-                Console.BackgroundColor = pair.Color;
+                SetBackgroundColor(pair);
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.WriteLine(pair);
                 Console.ResetColor();
             }
         }
+
+        public static ConsoleColor SetBackgroundColor(ComparedParam pair)
+        {
+            return pair.Action switch
+            {
+                "U" => Console.BackgroundColor = ConsoleColor.Gray,
+                "M" => Console.BackgroundColor = ConsoleColor.Yellow,
+                "R" => Console.BackgroundColor = ConsoleColor.Red,
+                "A" => Console.BackgroundColor = ConsoleColor.Green,
+                _ => Console.BackgroundColor,
+            };
+        }
+
     }
 }
