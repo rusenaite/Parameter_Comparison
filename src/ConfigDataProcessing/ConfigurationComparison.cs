@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace ParameterComparison
 {
-    public class ConfigurationComparison : ConfigurationDataPrinter
+    public class ConfigurationComparison
     {
 
         public (string result, int count)[] resultCount = new [] { ("U", 0), ("M", 0), ("R", 0), ("A", 0) };
@@ -98,7 +98,6 @@ namespace ParameterComparison
             }
 
             pair.Action = action;
-            pair.Color = color;
 
             return pair;
         }
