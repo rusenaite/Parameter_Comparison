@@ -8,7 +8,7 @@ namespace ParameterComparison
 {
     interface IUserInput
     {
-        int GetActionChoice();
+        int GetActionChoice(string regex);
         string GetFilter(string regex);
     }
 }

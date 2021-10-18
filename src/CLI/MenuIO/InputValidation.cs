@@ -9,25 +9,33 @@ namespace ParameterComparison
 {
     class InputValidation : IUserInput
     {
-        const int MinOption = 0;
-        const int MaxOption = 4;
 
         public const string LetterFilter = "^[AMRU]*$";
         public const string IdFilter = @"^\d+$";
+        public const string ActionFilter = "^[0-3]$";
 
         /// <summary>
         /// Method gets valid user input of desired action to take selected from menu.
         /// </summary>
         /// <returns> If entered input is valid, returns chosen action number, otherwise - 
         /// returns a default action number. </returns>
-        public int GetActionChoice()
+        public int GetActionChoice(string regex)
         {
             string choice = Console.ReadLine();
 
-            while (!IsValidIntInRange(choice))
+            while (true)
             {
-                Console.Error.Write("[ Error ]: Unavailable choice entered. Re-enter your choice: ");
-                choice = Console.ReadLine();
+                Match match = Regex.Match(choice, regex, RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.Error.Write("[ Error ]: Unavailable choice entered. Re-enter your choice: ");
+                    choice = Console.ReadLine();
+                }
             }
 
             int userChoice = Int32.Parse(choice);
@@ -59,16 +67,6 @@ namespace ParameterComparison
             }
 
             return input;
-        }
-
-        /// <summary>
-        /// Method returns whether string is an integer in [ minOption ; maxOption ] range.
-        /// </summary>
-        /// <param name="option"></param>
-        /// <returns> If string is valid - returns true, otherwise - returns false. </returns>
-        public static bool IsValidIntInRange(string option)
-        {
-            return int.TryParse(option, out int choice) && MinOption <= choice && choice <= MaxOption;
         }
 
     }
