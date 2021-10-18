@@ -16,7 +16,7 @@ namespace ParameterComparison
 
         public override string ToString()
         {
-            return Action.PadRight(ColumnWidth) + SourcePair.Key.ToString().PadRight(ColumnWidth) + TargetPair.Key;
+            return Action.PadRight(ColumnWidth / 2) + SourcePair.Key.ToString().PadRight(ColumnWidth / 2) + SourcePair.Value.ToString().PadRight(ColumnWidth) + TargetPair.Value.ToString().PadRight(ColumnWidth);
         }
     }
 }

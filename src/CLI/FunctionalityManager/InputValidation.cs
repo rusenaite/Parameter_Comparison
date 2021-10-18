@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
     class InputValidation : IUserInput
     {
-        public const int MinOption = 0;
-        public const int MaxOption = 4;
+        const int MinOption = 0;
+        const int MaxOption = 4;
+
+        public const string LetterFilter = "^[AMRU]*$";
+        public const string IdFilter = @"^\d+$";
 
         /// <summary>
         /// Method gets valid user input of desired action to take selected from menu.
@@ -31,36 +35,27 @@ namespace ParameterComparison
         }
 
         /// <summary>
-        /// Method gets valid user input of entered integer type ID value (or a part of it).
+        /// Method gets valid selected user input of entered values.
         /// </summary>
-        /// <returns> If entered input is valid, returns entered value, otherwise - an empty
-        /// string. </returns>
-        public string GetIdFilter()
-        {
-            string userInput = Console.ReadLine();
-
-            while (!int.TryParse(userInput, out _))
-            {
-                Console.Error.Write("[ Error ]: Unavailable choice entered. Re-enter your choice: ");
-                userInput = Console.ReadLine();
-            }
-
-            return userInput;
-        }
-
-        /// <summary>
-        /// Method gets valid user input of chosen desired comparison result filter.
-        /// </summary>
-        /// <returns> If entered input is valid, returns entered letter, 
-        /// otherwise - returns a default letter. </returns>
-        public string GetLetterFilter()
+        /// <returns> If entered input is valid, returns entered string, 
+        /// otherwise - returns an empty string. </returns>
+        public string GetFilter(string regex)
         {
             string input = Console.ReadLine();
 
-            while (!string.Equals(input, "U") | !string.Equals(input, "M") | !string.Equals(input, "R") | !string.Equals(input, "A"))
+            while (true)
             {
-                Console.Error.Write("[ Error ]: Unavailable input entered. Re-enter your input: ");
-                input = Console.ReadLine();
+                Match match = Regex.Match(input, regex, RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.Error.Write("[ Error ]: Unavailable input entered. Re-enter your input: ");
+                    input = Console.ReadLine();
+                }
             }
 
             return input;

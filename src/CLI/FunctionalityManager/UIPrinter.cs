@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParameterComparison.src.CLI
+namespace ParameterComparison
 {
     public class UIPrinter : IUIPrinter
     {

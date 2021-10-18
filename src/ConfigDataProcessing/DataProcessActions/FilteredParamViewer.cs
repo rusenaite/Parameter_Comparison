@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    public class FilteredParamViewer : ConfigurationComparison, ISpecificAction
+    public class FilteredParamViewer : ConfigurationComparison, IFilteringAction
     {
         /// <summary>
         /// Method prints filtered parameters by a given key value (filter).

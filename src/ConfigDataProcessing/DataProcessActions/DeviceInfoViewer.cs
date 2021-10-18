@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    public class DeviceInfoViewer : ConfigurationComparison, ISpecificAction
+    public class DeviceInfoViewer : ConfigurationComparison, IFilteringAction
     {
 
         /// <summary>

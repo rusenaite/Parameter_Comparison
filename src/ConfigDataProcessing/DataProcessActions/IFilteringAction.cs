@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    interface ISpecificAction
+    interface IFilteringAction
     {
         void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string s);
     }

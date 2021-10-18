@@ -14,7 +14,7 @@ namespace ParameterComparison
 
         public override string ToString()
         {
-            return ColumnName[0].PadRight(ColumnWidth) + ColumnName[1].PadRight(ColumnWidth) + 
+            return ColumnName[0].PadRight(ColumnWidth / 2) + ColumnName[1].PadRight(ColumnWidth / 2) + 
                    ColumnName[2].PadRight(ColumnWidth) + ColumnName[3];
         }
     }

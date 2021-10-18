@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    public class ParametersByCompResultViewer : ConfigurationComparison, ISpecificAction
+    public class FilterParamByCompResultViewer : ConfigurationComparison, IFilteringAction
     {
         /// <summary>
         /// Method allows printing parameters of selected comparison result.
