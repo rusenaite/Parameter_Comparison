@@ -12,9 +12,13 @@ namespace ParameterComparison
 
         public readonly string[] ColumnName = { "Status", "ID", "Source Value", "Target Value" };
 
+        /// <summary>
+        /// Method prints Columns class in format.
+        /// </summary>
+        /// <returns> Formated column names to print. </returns>
         public override string ToString()
         {
-            return ColumnName[0].PadRight(ColumnWidth / 2) + ColumnName[1].PadRight(ColumnWidth / 2) + 
+            return "\n\n" + ColumnName[0].PadRight(ColumnWidth / 2) + ColumnName[1].PadRight(ColumnWidth / 2) + 
                    ColumnName[2].PadRight(ColumnWidth) + ColumnName[3];
         }
     }

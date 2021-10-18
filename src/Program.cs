@@ -17,16 +17,17 @@ namespace ParameterComparison
             IUIPrinter printer = new UIPrinter();
             IUserInput inputValidator = new InputValidation();
 
-            IFilteringAction deviceInfoViewer = new DeviceInfoViewer();
+            IDeviceInfoAction deviceInfoViewer = new DeviceInfoViewer();
             IAction parametersListViewer = new ParametersListViewer();
             IAction comparisonResultsSummaryViewer = new CompResultsSummaryViewer();
             IFilteringAction filteredParamByIdViewer = new FilteredParamViewer();
             IFilteringAction filterParamByCompResultViewer = new FilterParamByCompResultViewer();
 
-
             printer.PrintMainMenu();
 
             int actionChoice = inputValidator.GetActionChoice(InputValidation.ActionFilter);
+
+            deviceInfoViewer.View(sourceData, targetData, sourcePath, targetPath); 
 
             switch (actionChoice)
             {

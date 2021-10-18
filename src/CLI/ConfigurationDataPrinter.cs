@@ -28,6 +28,13 @@ namespace ParameterComparison
             }
         }
 
+        /// <summary>
+        /// Method assigns a custom console background color for a compared parameter depending on
+        /// it's comparison result.
+        /// </summary>
+        /// <param name="pair"></param>
+        /// <returns> If assignment went well, returns ConsoleColor value, otherwise - 
+        /// a default background color. </returns>
         public static ConsoleColor SetBackgroundColor(ComparedParam pair)
         {
             return pair.Action switch
