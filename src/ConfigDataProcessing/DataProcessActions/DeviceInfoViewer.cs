@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    public class DeviceInfoViewer : ConfigurationComparison, IFilteringAction
+    public class DeviceInfoViewer : ConfigurationComparison, IDeviceInfoAction
     {
 
         /// <summary>
@@ -16,15 +16,15 @@ namespace ParameterComparison
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
         /// <param name="path"></param>
-        public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string path)
+        public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string sourcePath, string targetPath)
         {
             string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
                               DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
 
             if (ContainsKeys(sourceData.GetStringTypeKeys(), keys) && ContainsKeys(targetData.GetStringTypeKeys(), keys))
             {
-                PrintDeviceConfigInfo(sourceData.GetStringTypeKeys(), path);
-                PrintDeviceConfigInfo(targetData.GetStringTypeKeys(), path);
+                PrintDeviceConfigInfo(sourceData.GetStringTypeKeys(), sourcePath);
+                PrintDeviceConfigInfo(targetData.GetStringTypeKeys(), targetPath);
             }
         }
 

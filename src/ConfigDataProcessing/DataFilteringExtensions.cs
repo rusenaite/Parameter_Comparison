@@ -39,17 +39,7 @@ namespace ParameterComparison
         /// otherwise - an empty dictionary. </returns>
         public static Dictionary<string, string> GetStringTypeKeys(this Dictionary<string, string> data)
         {
-            Dictionary<string, string> stringKeyData = new();
-
-            foreach (var pair in from pair in data
-                                 let success = int.TryParse(pair.Key, out int key)
-                                 where !success
-                                 select pair)
-            {
-                stringKeyData.Add(pair.Key, pair.Value);
-            }
-
-            return stringKeyData;
+            return data.Where(pair => !(int.TryParse(pair.Key, out int key))).ToDictionary(p => p.Key, p => p.Value);
         }
 
         /// <summary>
@@ -61,9 +51,8 @@ namespace ParameterComparison
         /// without device information, otherwise - an empty dictionary. </returns>
         public static Dictionary<string, string> RemovedDeviceInfo(this Dictionary<string, string> stringData)
         {
-            DeviceInfo devInfo = new();
-            string[] keys = { devInfo.ConfigurationVersion, devInfo.HwVersion, devInfo.Title,
-                            devInfo.MinConfigurationVersion, devInfo.FmType, devInfo.SpecId };
+            string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
+                              DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
 
             for (int i = 0; i < keys.Length; ++i)
             {
