@@ -37,7 +37,7 @@ namespace ParameterComparison
                     {
                         if (srcPair.Value == trgPair.Value)
                         {
-                            ComparedParam pair = SetComparedPair(srcPair, trgPair, "U", ConsoleColor.Gray);
+                            ComparedParam pair = SetComparedPair(srcPair, trgPair, "U");
                             resultsList.Add(pair);
 
                             break;
@@ -46,24 +46,24 @@ namespace ParameterComparison
                             && sourceData.ContainsKey(trgPair.Key)
                             && targetData.ContainsKey(srcPair.Key))
                         {
-                            ComparedParam pair = SetComparedPair(srcPair, trgPair, "M", ConsoleColor.Yellow);
+                            ComparedParam pair = SetComparedPair(srcPair, trgPair, "M");
                             resultsList.Add(pair);
 
                             break;
                         }
                     }
 
-                    else if (sourceData.ContainsKey(trgPair.Key) && !targetData.ContainsKey(srcPair.Key))
+                    else if (!targetData.ContainsKey(srcPair.Key))
                     {
-                        ComparedParam pair = SetComparedPair(srcPair, trgPair, "R", ConsoleColor.Red);
+                        ComparedParam pair = SetComparedPair(srcPair, trgPair, "R");
                         resultsList.Add(pair);
 
                         break;
                     }
 
-                    else if (!sourceData.ContainsKey(trgPair.Key) && targetData.ContainsKey(srcPair.Key))
+                    if (!sourceData.ContainsKey(trgPair.Key))
                     {
-                        ComparedParam pair = SetComparedPair(srcPair, trgPair, "A", ConsoleColor.Green);
+                        ComparedParam pair = SetComparedPair(srcPair, trgPair, "A");
                         resultsList.Add(pair);
                     }
                 }
@@ -72,18 +72,17 @@ namespace ParameterComparison
             return resultsList;
         }
 
+
         /// <summary>
         /// Method creates a ComparedParam object of compared pair data.
         /// </summary>
         /// <param name="sourcePair"></param>
         /// <param name="targetPair"></param>
         /// <param name="action"></param>
-        /// <param name="color"></param>
         /// <returns> If object generation went well, returns a ComparedParam object,
         /// otherwise - an empty ComparedParam object.</returns>
         public static ComparedParam SetComparedPair(KeyValuePair<int, string> sourcePair,
-                                                    KeyValuePair<int, string> targetPair, string action,
-                                                    ConsoleColor color)
+                                                    KeyValuePair<int, string> targetPair, string action)
         {
             ComparedParam pair = new ComparedParam();
 
