@@ -39,10 +39,10 @@ namespace ParameterComparison
         {
             return pair.Action switch
             {
-                "U" => Console.BackgroundColor = ConsoleColor.Gray,
-                "M" => Console.BackgroundColor = ConsoleColor.Yellow,
-                "R" => Console.BackgroundColor = ConsoleColor.Red,
-                "A" => Console.BackgroundColor = ConsoleColor.Green,
+                ParamAction.Unmodified => Console.BackgroundColor = ConsoleColor.Gray,
+                ParamAction.Modified => Console.BackgroundColor = ConsoleColor.Yellow,
+                ParamAction.Removed => Console.BackgroundColor = ConsoleColor.Red,
+                ParamAction.Added => Console.BackgroundColor = ConsoleColor.Green,
                 _ => Console.BackgroundColor,
             };
         }

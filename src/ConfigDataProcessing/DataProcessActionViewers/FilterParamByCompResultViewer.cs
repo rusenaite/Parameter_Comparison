@@ -18,7 +18,14 @@ namespace ParameterComparison
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
-            List<ComparedParam> chosenList = list.Where(pair => pair.Action == choice && pair.Action.Any()).ToList();
+            List<ComparedParam> chosenList = new();
+
+            char chosenAction = char.Parse(choice);
+
+            if (Enum.TryParse<ParamAction>(choice, out ParamAction action))
+            {
+                chosenList = list.Where(pair => pair.Action == action).ToList();
+            }
 
             if (!chosenList.Any())
             {
