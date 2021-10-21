@@ -10,7 +10,7 @@ namespace ParameterComparison
     public class ConfigurationComparison
     {
 
-        public (ParamAction result, int count)[] resultCount = new[] { (ParamAction.Unmodified, 0), (ParamAction.Modified, 0), (ParamAction.Removed, 0), (ParamAction.Added, 0) };
+        public (ParamAction result, int count)[] resultCount = new[] { (ParamAction.U, 0), (ParamAction.M, 0), (ParamAction.R, 0), (ParamAction.A, 0) };
 
         /// <summary>
         /// Method compares integer-key-type source and target data and based on comparison
@@ -43,7 +43,7 @@ namespace ParameterComparison
 
                     ComparedParam removedParam = new ComparedParam(srcPair, trgPair)
                     {
-                        Action = ParamAction.Removed
+                        Action = ParamAction.R
                     };
 
                     resultsList.Add(removedParam);
@@ -57,7 +57,7 @@ namespace ParameterComparison
 
                 ComparedParam addedParam = new ComparedParam(srcPair, trgPair)
                 {
-                    Action = ParamAction.Added
+                    Action = ParamAction.A
                 };
 
                 resultsList.Add(addedParam);

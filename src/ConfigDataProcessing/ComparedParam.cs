@@ -16,16 +16,16 @@ namespace ParameterComparison
             {
                 if (source.Value == target.Value)
                 {
-                    Action = ParamAction.Unmodified;
+                    Action = ParamAction.U;
                 }
                 else
                 {
-                    Action = ParamAction.Modified;
+                    Action = ParamAction.M;
                 }
             }
             else if (!source.Equals(default(KeyValuePair<int, string>)) && target.Equals(default(KeyValuePair<int, string>)))
             {
-                Action = ParamAction.Removed;
+                Action = ParamAction.R;
             }
 
             SourcePair = source;
@@ -56,9 +56,9 @@ namespace ParameterComparison
 
     public enum ParamAction
     {
-        Unmodified = 'U',
-        Added = 'A',
-        Removed = 'R',
-        Modified = 'M'
+        U,
+        A,
+        R,
+        M
     }
 }
