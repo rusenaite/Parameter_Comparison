@@ -10,7 +10,7 @@ namespace ParameterComparison
     public class ConfigurationComparison
     {
 
-        public (ParamAction result, int count)[] resultCount = new [] { (ParamAction.Unmodified, 0), (ParamAction.Modified, 0), (ParamAction.Removed, 0), (ParamAction.Added, 0) };
+        public (ParamAction result, int count)[] resultCount = new[] { (ParamAction.Unmodified, 0), (ParamAction.Modified, 0), (ParamAction.Removed, 0), (ParamAction.Added, 0) };
 
         /// <summary>
         /// Method compares integer-key-type source and target data and based on comparison
@@ -24,12 +24,10 @@ namespace ParameterComparison
         {
             var resultsList = new List<ComparedParam>();
 
-            // unchanged, modified or removed values
             foreach (var srcPair in sourceData)
             {
                 var trgKey = targetData.FirstOrDefault(x => x.Key == srcPair.Key).Key;
 
-                // source key exists in target, unmodified or changed
                 if (trgKey != default) 
                 {
                     var trgPair = targetData.FirstOrDefault(pair => pair.Key == trgKey);
@@ -39,7 +37,7 @@ namespace ParameterComparison
                     targetData.Remove(trgPair.Key);
                     resultsList.Add(comparedParam);
                 }
-                else // target neturi source - removed
+                else
                 {
                     KeyValuePair<int, string> trgPair = default;
 
@@ -50,10 +48,9 @@ namespace ParameterComparison
 
                     resultsList.Add(removedParam);
                 }
-
             }
 
-            // added values
+
             foreach(var trgPair in targetData)
             {
                 KeyValuePair<int, string> srcPair = default;

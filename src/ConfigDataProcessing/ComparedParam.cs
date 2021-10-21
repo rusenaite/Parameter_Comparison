@@ -12,7 +12,6 @@ namespace ParameterComparison
 
         public ComparedParam(KeyValuePair<int, string> source, KeyValuePair<int, string> target)
         {
-            // assign action
             if (source.Key == target.Key)
             {
                 if (source.Value == target.Value)
@@ -29,7 +28,6 @@ namespace ParameterComparison
                 Action = ParamAction.Removed;
             }
 
-            // assign given values
             SourcePair = source;
             TargetPair = target;
         }
