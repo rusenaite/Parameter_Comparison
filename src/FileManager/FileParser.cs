@@ -17,7 +17,7 @@ namespace ParameterComparison
         /// otherwise - an empty dictionary collection. </returns>
         public static Dictionary<string, string> ParseCfg(StreamReader stream)
         {
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+            Dictionary<string, string> keyValuePairs = new();
 
             string fileText = stream.ReadToEnd();
             string[] lines = fileText.Split(';');

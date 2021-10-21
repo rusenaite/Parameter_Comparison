@@ -10,7 +10,7 @@ namespace ParameterComparison
     public class ConfigurationComparison
     {
 
-        public (string result, int count)[] resultCount = new [] { ("U", 0), ("M", 0), ("R", 0), ("A", 0) };
+        public (ParamAction result, int count)[] resultCount = new [] { (ParamAction.Unmodified, 0), (ParamAction.Modified, 0), (ParamAction.Removed, 0), (ParamAction.Added, 0) };
 
         /// <summary>
         /// Method compares integer-key-type source and target data and based on comparison
@@ -22,83 +22,53 @@ namespace ParameterComparison
         /// otherwise - returns an empty list. </returns>
         public static List<ComparedParam> CompareConfig(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
         {
-            List<ComparedParam> resultsList = new List<ComparedParam>();
+            var resultsList = new List<ComparedParam>();
 
+            // unchanged, modified or removed values
             foreach (var srcPair in sourceData)
             {
-                foreach (var trgPair in targetData)
+                var trgKey = targetData.FirstOrDefault(x => x.Key == srcPair.Key).Key;
+
+                // source key exists in target, unmodified or changed
+                if (trgKey != default) 
                 {
-                    if (srcPair.Key > trgPair.Key)
-                    {
-                        continue;
-                    }
+                    var trgPair = targetData.FirstOrDefault(pair => pair.Key == trgKey);
 
-                    if (srcPair.Key == trgPair.Key)
-                    {
-                        if (srcPair.Value == trgPair.Value)
-                        {
-                            ComparedParam pair = SetComparedPair(srcPair, trgPair, "U");
-                            resultsList.Add(pair);
+                    ComparedParam comparedParam = new ComparedParam(srcPair, trgPair);
 
-                            break;
-                        }
-                        else if (srcPair.Value != trgPair.Value
-                            && sourceData.ContainsKey(trgPair.Key)
-                            && targetData.ContainsKey(srcPair.Key))
-                        {
-                            ComparedParam pair = SetComparedPair(srcPair, trgPair, "M");
-                            resultsList.Add(pair);
-
-                            break;
-                        }
-                    }
-
-                    else if (!targetData.ContainsKey(srcPair.Key))
-                    {
-                        ComparedParam pair = SetComparedPair(srcPair, trgPair, "R");
-                        resultsList.Add(pair);
-
-                        break;
-                    }
-
-                    if (!sourceData.ContainsKey(trgPair.Key))
-                    {
-                        ComparedParam pair = SetComparedPair(srcPair, trgPair, "A");
-                        resultsList.Add(pair);
-                    }
+                    targetData.Remove(trgPair.Key);
+                    resultsList.Add(comparedParam);
                 }
+                else // target neturi source - removed
+                {
+                    KeyValuePair<int, string> trgPair = default;
+
+                    ComparedParam removedParam = new ComparedParam(srcPair, trgPair)
+                    {
+                        Action = ParamAction.Removed
+                    };
+
+                    resultsList.Add(removedParam);
+                }
+
             }
+
+            // added values
+            foreach(var trgPair in targetData)
+            {
+                KeyValuePair<int, string> srcPair = default;
+
+                ComparedParam addedParam = new ComparedParam(srcPair, trgPair)
+                {
+                    Action = ParamAction.Added
+                };
+
+                resultsList.Add(addedParam);
+            }
+
+            resultsList = resultsList.OrderBy(parameter => parameter.TargetPair.Key).ThenBy(parameter => parameter.SourcePair.Key).ToList();
 
             return resultsList;
-        }
-
-
-        /// <summary>
-        /// Method creates a ComparedParam object of compared pair data.
-        /// </summary>
-        /// <param name="sourcePair"></param>
-        /// <param name="targetPair"></param>
-        /// <param name="action"></param>
-        /// <returns> If object generation went well, returns a ComparedParam object,
-        /// otherwise - an empty ComparedParam object.</returns>
-        public static ComparedParam SetComparedPair(KeyValuePair<int, string> sourcePair,
-                                                    KeyValuePair<int, string> targetPair, string action)
-        {
-            ComparedParam pair = new ComparedParam();
-
-            if (sourcePair.Value != null)
-            {
-                pair.SourcePair = sourcePair;
-            }
-
-            if (targetPair.Value != null)
-            {
-                pair.TargetPair = targetPair;
-            }
-
-            pair.Action = action;
-
-            return pair;
         }
         
         /// <summary>

@@ -17,9 +17,11 @@ namespace ParameterComparison
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
+            //resultCount
+
             for (int i = 0; i < resultCount.Length; ++i)
             {
-                resultCount[i].count = list.Where(pair => pair.Action == resultCount[i].result && pair.Action.Any()).Count();
+                resultCount[i].count = list.Where(pair => pair.Action == resultCount[i].result).Count();
             }
 
             PrintComparisonResultsSummary(resultCount);
@@ -29,9 +31,9 @@ namespace ParameterComparison
         /// Method prints summary of provided calculated comparison results.
         /// </summary>
         /// <param name="count"></param>
-        public static void PrintComparisonResultsSummary((string result, int count)[] count)
+        public static void PrintComparisonResultsSummary((ParamAction result, int count)[] count)
         {
-            count.Where(item => item.result != null && item.result.Any() && count != null).ToList().ForEach(tuple =>
+            count.Where(item => count != null).ToList().ForEach(tuple =>
             {
                 Console.Write($"{tuple.result}:{tuple.count} ");
             });
