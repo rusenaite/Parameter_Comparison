@@ -17,15 +17,10 @@ namespace ParameterComparison
         public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
-
             List<ComparedParam> chosenList = new();
 
-            char chosenAction = char.Parse(choice);
-
             if (Enum.TryParse<ParamAction>(choice, out ParamAction action))
-            {
                 chosenList = list.Where(pair => pair.Action == action).ToList();
-            }
 
             if (!chosenList.Any())
             {
