@@ -17,8 +17,6 @@ namespace ParameterComparison
         {
             List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
 
-            //resultCount
-
             for (int i = 0; i < resultCount.Length; ++i)
             {
                 resultCount[i].count = list.Where(pair => pair.Action == resultCount[i].result).Count();
