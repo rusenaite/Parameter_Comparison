@@ -18,17 +18,9 @@ namespace ParameterComparison
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
 
             using (FileStream fs = File.Open(path, FileMode.Open))
-            {
-                using (GZipStream gzip = new GZipStream(fs, CompressionMode.Decompress))
-                {
-                    using (StreamReader sr = new StreamReader(gzip, System.Text.Encoding.ASCII))
-                    {
-                        keyValuePairs = FileParser.ParseCfg(sr);
-                    }
-                }
-            }
-
-            return keyValuePairs;
+            using (GZipStream gzip = new GZipStream(fs, CompressionMode.Decompress))
+            using (StreamReader sr = new StreamReader(gzip, System.Text.Encoding.ASCII))
+            return FileParser.ParseCfg(sr);
         }
     }
 }
