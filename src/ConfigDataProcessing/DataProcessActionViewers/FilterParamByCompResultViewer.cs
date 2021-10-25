@@ -16,7 +16,7 @@ namespace ParameterComparison
         /// <param name="choice"></param>
         public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string choice)
         {
-            List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+            List<ComparedParam> list = CompareConfig(sourceData, targetData);
             List<ComparedParam> chosenList = new();
 
             if (Enum.TryParse<ParamAction>(choice, out ParamAction action))

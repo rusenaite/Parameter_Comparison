@@ -16,7 +16,7 @@ namespace ParameterComparison
         /// <param name="filter"></param>
         public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, string filter)
         {
-            List<ComparedParam> list = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+            List<ComparedParam> list = CompareConfig(sourceData, targetData);
             List<ComparedParam> foundParamList = SearchForValue(list, filter);
 
             if (!foundParamList.Any())

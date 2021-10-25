@@ -20,42 +20,20 @@ namespace ParameterComparison
         /// <param name="targetData"></param>
         /// <returns> If comparison went well, returns a list of compared parameters, 
         /// otherwise - returns an empty list. </returns>
-        public static List<ComparedParam> CompareConfig(Dictionary<int, string> sourceData, Dictionary<int, string> targetData)
+        public static List<ComparedParam> CompareConfig(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
             var resultsList = new List<ComparedParam>();
 
             foreach (var srcPair in sourceData)
             {
-                var trgKey = targetData.FirstOrDefault(x => x.Key == srcPair.Key).Key;
-
-                if (trgKey != default) 
-                {
-                    var trgPair = targetData.FirstOrDefault(pair => pair.Key == trgKey);
-
-                    ComparedParam comparedParam = new ComparedParam(srcPair, trgPair);
-
-                    targetData.Remove(trgPair.Key);
-                    resultsList.Add(comparedParam);
-                }
-                else
-                {
-                    KeyValuePair<int, string> trgPair = default;
-
-                    ComparedParam removedParam = new ComparedParam(srcPair, trgPair)
-                    {
-                        Action = ParamAction.R
-                    };
-
-                    resultsList.Add(removedParam);
-                }
+                ComparePair(ref targetData, srcPair, ref resultsList);
             }
-
 
             foreach(var trgPair in targetData)
             {
-                KeyValuePair<int, string> srcPair = default;
+                KeyValuePair<string, string> srcPair = default;
 
-                ComparedParam addedParam = new ComparedParam(srcPair, trgPair)
+                var addedParam = new ComparedParam(srcPair, trgPair)
                 {
                     Action = ParamAction.A
                 };
@@ -63,9 +41,39 @@ namespace ParameterComparison
                 resultsList.Add(addedParam);
             }
 
-            resultsList = resultsList.OrderBy(parameter => parameter.TargetPair.Key).ThenBy(parameter => parameter.SourcePair.Key).ToList();
+            return resultsList.OrderBy(parameter => parameter.TargetPair.Key).ThenBy(parameter => parameter.SourcePair.Key).ToList();
+        }
 
-            return resultsList;
+        /// <summary>
+        /// Method seaches for source pairs in target data and, based on result, accordingly creates ComparedParam object.
+        /// </summary>
+        /// <param name="targetData"></param>
+        /// <param name="srcPair"></param>
+        /// <param name="resultsList"></param>
+        public static void ComparePair(ref Dictionary<string, string> targetData, KeyValuePair<string, string> srcPair, ref List<ComparedParam> resultsList)
+        {
+            var trgKey = targetData.FirstOrDefault(x => x.Key == srcPair.Key).Key;
+
+            if (trgKey != default)
+            {
+                var trgPair = targetData.FirstOrDefault(pair => pair.Key == trgKey);
+
+                ComparedParam comparedParam = new ComparedParam(srcPair, trgPair);
+
+                targetData.Remove(trgPair.Key);
+                resultsList.Add(comparedParam);
+            }
+            else
+            {
+                KeyValuePair<string, string> trgPair = default;
+
+                ComparedParam removedParam = new ComparedParam(srcPair, trgPair)
+                {
+                    Action = ParamAction.R
+                };
+
+                resultsList.Add(removedParam);
+            }
         }
         
         /// <summary>
@@ -89,7 +97,7 @@ namespace ParameterComparison
         /// otherwise - an empty list. </returns>
         public static List<ComparedParam> SearchForValue(List<ComparedParam> data, string value)
         {
-            List<string> keysAsStrings = data.GetKeys().GetKeysAsStrings();
+            List<string> keysAsStrings = data.GetKeys();
             List<string> foundKeyList = new();
 
             bool found;
@@ -106,8 +114,7 @@ namespace ParameterComparison
                 foundKeyList.Add(key);
             }
 
-            List<int> intList = foundKeyList.GetKeysAsIntegers();
-            List<ComparedParam> foundPairs = FindDataByKeys(data, intList);
+            List<ComparedParam> foundPairs = FindDataByKeys(data, foundKeyList);
 
             return foundPairs;
         }
@@ -119,7 +126,7 @@ namespace ParameterComparison
         /// <param name="keyList"></param>
         /// <returns> If search went well, returns a list of data that contains provided
         /// keys, otherwise - an empty list.</returns>
-        public static List<ComparedParam> FindDataByKeys(List<ComparedParam> data, List<int> keyList)
+        public static List<ComparedParam> FindDataByKeys(List<ComparedParam> data, List<string> keyList)
         {
             List<ComparedParam> foundPairs = new();
 
