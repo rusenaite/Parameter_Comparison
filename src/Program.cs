@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParameterComparison.src.CLI.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -10,24 +11,39 @@ namespace ParameterComparison
         public const string targetPath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB920-modified.cfg";
         static void Main()
         {
-            var printer = new UIPrinter();
-            var inputValidator = new InputValidation();
+            try
+            {
+                var printer = new UIPrinter(sourcePath, targetPath);
+                var inputValidator = new InputValidation();
 
-            printer.ReadData(sourcePath, targetPath);
+                //printer.ReadData(sourcePath, targetPath);
 
-            int requestedAction = printer.GetActionRequest(inputValidator);
+                printer.PrintMainMenu();
 
-            printer.PrintRequest(selectedModel);
+                var requestedAction = printer.GetAction(inputValidator);
 
-            IDeviceInfoAction deviceInfoViewer = new DeviceInfoViewer();
-            var parametersListViewer = new ParametersListViewer();
-            IAction comparisonResultsSummaryViewer = new CompResultsSummaryViewer();
-            IFilteringAction filteredParamByIdViewer = new FilteredParamViewer();
-            IFilteringAction filterParamByCompResultViewer = new FilterParamByCompResultViewer();
+                var request = printer.GetRequestedModel(requestedAction);
 
-            UIPrinter.PrintMainMenu();
+                printer.PrintRequest(request);
 
-            int actionChoice = inputValidator.GetActionChoice(InputValidation.ActionFilter);
+                /*
+                IDeviceInfoAction deviceInfoViewer = new DeviceInfoViewer();
+                var parametersListViewer = new ParametersListViewer();
+                IAction comparisonResultsSummaryViewer = new CompResultsSummaryViewer();
+                IFilteringAction filteredParamByIdViewer = new FilteredParamViewer();
+                IFilteringAction filterParamByCompResultViewer = new FilterParamByCompResultViewer();
+                */
+
+            }
+            catch (NullReferenceException err)
+            {
+                Console.WriteLine(err.Message);
+            }
+            catch (NotImplementedException err)
+            {
+                Console.WriteLine(err.Message);
+            }
+
         }
     }
 }

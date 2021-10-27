@@ -18,7 +18,7 @@ namespace ParameterComparison
         {
             List<ComparedParam> comparedData = CompareConfig(sourceData, targetData);
 
-            ConfigurationDataPrinter.PrintComparedData(comparedData);
+            Printers.PrintComparedData(comparedData);
             PrintStringTypeIdData(sourceData.GetStringTypeKeys().RemovedDeviceInfo(), targetData.GetStringTypeKeys().RemovedDeviceInfo());
         }
 

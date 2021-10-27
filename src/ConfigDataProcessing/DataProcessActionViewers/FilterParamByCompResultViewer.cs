@@ -28,7 +28,7 @@ namespace ParameterComparison
             }
             else
             {
-                ConfigurationDataPrinter.PrintComparedData(chosenList);
+                Printers.PrintComparedData(chosenList);
             }
         }
     }
