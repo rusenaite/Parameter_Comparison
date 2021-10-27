@@ -21,8 +21,7 @@ namespace ParameterComparison
         /// returns a default action number. </returns>
         public int GetActionChoice(string regex)
         {
-            string choice = Console.ReadLine();
-
+            string choice = UIPrinter.ReadLine();
             while (true)
             {
                 Match match = Regex.Match(choice, regex, RegexOptions.IgnoreCase);
@@ -33,8 +32,8 @@ namespace ParameterComparison
                 }
                 else
                 {
-                    Console.Error.Write("[ Error ]: Unavailable choice entered. Re-enter your choice: ");
-                    choice = Console.ReadLine();
+                    UIPrinter.PrintInputError();
+                    choice = UIPrinter.ReadLine();
                 }
             }
 
@@ -49,7 +48,7 @@ namespace ParameterComparison
         /// otherwise - returns an empty string. </returns>
         public string GetFilter(string regex)
         {
-            string input = Console.ReadLine();
+            string input = UIPrinter.ReadLine();
 
             while (true)
             {
@@ -61,8 +60,8 @@ namespace ParameterComparison
                 }
                 else
                 {
-                    Console.Error.Write("[ Error ]: Unavailable input entered. Re-enter your input: ");
-                    input = Console.ReadLine();
+                    UIPrinter.PrintInputError();
+                    input = UIPrinter.ReadLine();
                 }
             }
 

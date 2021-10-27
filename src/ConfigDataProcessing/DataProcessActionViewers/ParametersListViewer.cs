@@ -16,9 +16,9 @@ namespace ParameterComparison
         /// <param name="targetData"></param>
         public void View(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            List<ComparedParam> comparedData = CompareConfig(sourceData.GetIntTypeKeys(), targetData.GetIntTypeKeys());
+            List<ComparedParam> comparedData = CompareConfig(sourceData, targetData);
 
-            ConfigurationDataPrinter.PrintComparedData(comparedData);
+            Printers.PrintComparedData(comparedData);
             PrintStringTypeIdData(sourceData.GetStringTypeKeys().RemovedDeviceInfo(), targetData.GetStringTypeKeys().RemovedDeviceInfo());
         }
 

@@ -10,7 +10,7 @@ namespace ParameterComparison
     {
         private readonly int ColumnWidth = 40;
 
-        public ComparedParam(KeyValuePair<int, string> source, KeyValuePair<int, string> target)
+        public ComparedParam(KeyValuePair<string, string> source, KeyValuePair<string, string> target)
         {
             if (source.Key == target.Key)
             {
@@ -23,7 +23,7 @@ namespace ParameterComparison
                     Action = ParamAction.M;
                 }
             }
-            else if (!source.Equals(default(KeyValuePair<int, string>)) && target.Equals(default(KeyValuePair<int, string>)))
+            else if (!source.Equals(default(KeyValuePair<string, string>)) && target.Equals(default(KeyValuePair<string, string>)))
             {
                 Action = ParamAction.R;
             }
@@ -32,8 +32,8 @@ namespace ParameterComparison
             TargetPair = target;
         }
 
-        public KeyValuePair<int, string> SourcePair { get; set; }
-        public KeyValuePair<int, string> TargetPair { get; set; }
+        public KeyValuePair<string, string> SourcePair { get; set; }
+        public KeyValuePair<string, string> TargetPair { get; set; }
         public ParamAction Action { get; set; }
 
         public override string ToString()

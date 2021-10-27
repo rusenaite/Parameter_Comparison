@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.CLI.Models
 {
-    interface IUIPrinter
+    public interface IRequestModel
     {
-        void PrintMainMenu();
-        void PrintComparisonResultChoices();
+        //public List<ComparedParam> Create();
     }
 }

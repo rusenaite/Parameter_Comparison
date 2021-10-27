@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParameterComparison.src.CLI.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -10,45 +11,39 @@ namespace ParameterComparison
         public const string targetPath = "C:/Users/raust/source/repos/ParameterComparison/data_samples/FMB920-modified.cfg";
         static void Main()
         {
-
-            Dictionary<string, string> sourceData = FileReader.ReadGZippedFiles(sourcePath);
-            Dictionary<string, string> targetData = FileReader.ReadGZippedFiles(targetPath);
-
-            IUIPrinter printer = new UIPrinter();
-            IUserInput inputValidator = new InputValidation();
-
-            IDeviceInfoAction deviceInfoViewer = new DeviceInfoViewer();
-            IAction parametersListViewer = new ParametersListViewer();
-            IAction comparisonResultsSummaryViewer = new CompResultsSummaryViewer();
-            IFilteringAction filteredParamByIdViewer = new FilteredParamViewer();
-            IFilteringAction filterParamByCompResultViewer = new FilterParamByCompResultViewer();
-
-            printer.PrintMainMenu();
-
-            int actionChoice = inputValidator.GetActionChoice(InputValidation.ActionFilter);
-
-            deviceInfoViewer.View(sourceData, targetData, sourcePath, targetPath); 
-
-            switch (actionChoice)
+            try
             {
-                case 0:
-                    parametersListViewer.View(sourceData, targetData);
-                    break;
-                case 1:
-                    comparisonResultsSummaryViewer.View(sourceData, targetData);
-                    break;
-                case 2:
-                    string idFilter = inputValidator.GetFilter(InputValidation.IdFilter);
+                var printer = new UIPrinter(sourcePath, targetPath);
+                var inputValidator = new InputValidation();
 
-                    filteredParamByIdViewer.View(sourceData, targetData, idFilter);
-                    break;
-                case 3:
-                    printer.PrintComparisonResultChoices();
-                    string stateFilter = inputValidator.GetFilter(InputValidation.LetterFilter);
+                //printer.ReadData(sourcePath, targetPath);
 
-                    filterParamByCompResultViewer.View(sourceData, targetData, stateFilter);
-                    break;
+                printer.PrintMainMenu();
+
+                var requestedAction = printer.GetAction(inputValidator);
+
+                var request = printer.GetRequestedModel(requestedAction);
+
+                printer.PrintRequest(request);
+
+                /*
+                IDeviceInfoAction deviceInfoViewer = new DeviceInfoViewer();
+                var parametersListViewer = new ParametersListViewer();
+                IAction comparisonResultsSummaryViewer = new CompResultsSummaryViewer();
+                IFilteringAction filteredParamByIdViewer = new FilteredParamViewer();
+                IFilteringAction filterParamByCompResultViewer = new FilterParamByCompResultViewer();
+                */
+
             }
+            catch (NullReferenceException err)
+            {
+                Console.WriteLine(err.Message);
+            }
+            catch (NotImplementedException err)
+            {
+                Console.WriteLine(err.Message);
+            }
+
         }
     }
 }
