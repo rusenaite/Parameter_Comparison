@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison.src.CLI.Models
 {
-    public class FilteredDataByComparisonResultModel
+    public class FilteredDataByComparisonResultModel : IRequestModel
     {
         public static Dictionary<string, string> SourceData;
         public static Dictionary<string, string> TargetData;

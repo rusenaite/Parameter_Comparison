@@ -21,7 +21,7 @@ namespace ParameterComparison.src.CLI.Mappers
 
         public void Print((ParamAction, int)[] result)
         {
-            UIPrinter.PrintComparisonResultsSummary(result);
+            Printers.PrintComparisonResultsSummary(result);
         }
     }
 }

@@ -47,22 +47,22 @@ namespace ParameterComparison
             return inputValidator.GetFilter(filter);
         }
 
-        public RequestModel GetRequestedModel(int action)
+        public IRequestModel GetRequestedModel(int action)
         {
             switch (action)
             {
                 case 0:
                     var parameterListModel = new ParameterListModel(SourceData, TargetData);
-                    return (RequestModel)parameterListModel;
+                    return (IRequestModel)parameterListModel;
                 case 1:
                     var resultSummaryModel = new ResultsSummaryModel(SourceData, TargetData);
-                    return (RequestModel)resultSummaryModel;
+                    return (IRequestModel)resultSummaryModel;
                 case 2:
                     var filteredDataByIdModel = new FilteredDataByIdModel(SourceData, TargetData);
-                    return (RequestModel)filteredDataByIdModel;
+                    return (IRequestModel)filteredDataByIdModel;
                 case 3:
                     var filteredDataByComparisonResultModel = new FilteredDataByComparisonResultModel(SourceData, TargetData);
-                    return (RequestModel)filteredDataByComparisonResultModel;
+                    return (IRequestModel)filteredDataByComparisonResultModel;
                 default:
                     throw new NotImplementedException();
             }
@@ -104,7 +104,7 @@ namespace ParameterComparison
             Console.Error.Write("[ Error ]: Unavailable input entered. Re-enter your choice: ");
         }
 
-        public void PrintRequest(RequestModel model)
+        public void PrintRequest(IRequestModel model)
         {
             var devInfoModel = new DeviceInfoModel(SourceData, TargetData);
             var parameterListModel = new ParameterListModel(SourceData, TargetData);
