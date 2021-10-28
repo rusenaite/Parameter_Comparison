@@ -13,10 +13,8 @@ namespace ParameterComparison
         {
             try
             {
-                var printer = new UIPrinter(sourcePath, targetPath);
+                var printer = new MainController(sourcePath, targetPath);
                 var inputValidator = new InputValidation();
-
-                //printer.ReadData(sourcePath, targetPath);
 
                 printer.PrintMainMenu();
 
@@ -25,14 +23,6 @@ namespace ParameterComparison
                 var request = printer.GetRequestedModel(requestedAction);
 
                 printer.PrintRequest(request);
-
-                /*
-                IDeviceInfoAction deviceInfoViewer = new DeviceInfoViewer();
-                var parametersListViewer = new ParametersListViewer();
-                IAction comparisonResultsSummaryViewer = new CompResultsSummaryViewer();
-                IFilteringAction filteredParamByIdViewer = new FilteredParamViewer();
-                IFilteringAction filterParamByCompResultViewer = new FilterParamByCompResultViewer();
-                */
 
             }
             catch (NullReferenceException err)
