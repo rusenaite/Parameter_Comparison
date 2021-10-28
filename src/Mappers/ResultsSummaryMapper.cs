@@ -1,9 +1,5 @@
 ﻿using ParameterComparison.src.CLI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ParameterComparison.src.ConfigDataProcessing;
 
 namespace ParameterComparison.src.CLI.Mappers
 {
@@ -14,12 +10,16 @@ namespace ParameterComparison.src.CLI.Mappers
         /// </summary>
         /// <param name="model"></param>
         /// <returns> If creation went well, returns an array of results, otherwise - an empty array. </returns>
-        public (ParamAction, int)[] Map(ResultsSummaryModel model)
+        public (ComparisonResult, int)[] Map(ResultsSummaryModel model)
         {
-            return model.Create();
+            return model.GetResult();
         }
 
-        public void Print((ParamAction, int)[] result)
+        /// <summary>
+        /// Method prints parameter comparison results.
+        /// </summary>
+        /// <param name="result"></param>
+        public void Print((ComparisonResult, int)[] result)
         {
             Printers.PrintComparisonResultsSummary(result);
         }

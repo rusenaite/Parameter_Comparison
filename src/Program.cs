@@ -1,9 +1,8 @@
-﻿using ParameterComparison.src.CLI.Models;
+﻿using ParameterComparison.src.CLI;
+using ParameterComparison.src.CLI.Controllers;
 using System;
-using System.Collections.Generic;
-using System.IO;
 
-namespace ParameterComparison
+namespace ParameterComparison.src
 {
     class Program
     {
@@ -14,11 +13,10 @@ namespace ParameterComparison
             try
             {
                 var printer = new MainController(sourcePath, targetPath);
-                var inputValidator = new InputValidation();
 
                 printer.PrintMainMenu();
 
-                var requestedAction = printer.GetAction(inputValidator);
+                var requestedAction = printer.GetAction();
 
                 var request = printer.GetRequestedModel(requestedAction);
 
@@ -27,6 +25,7 @@ namespace ParameterComparison
                 printer.PrintRequest(requestedDeviceInfoModel);
                 printer.PrintRequest(request);
 
+                Console.ReadLine();
             }
             catch (NullReferenceException err)
             {

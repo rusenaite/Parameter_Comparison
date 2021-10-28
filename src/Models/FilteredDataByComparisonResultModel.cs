@@ -1,8 +1,7 @@
-﻿using System;
+﻿using ParameterComparison.src.ConfigDataProcessing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParameterComparison.src.CLI.Models
 {
@@ -18,27 +17,21 @@ namespace ParameterComparison.src.CLI.Models
         }
 
         /// <summary>
-        /// Method creates parameter's list model - a list of compared parameters.
+        /// Method creates filtered data by comparison result model - a list of compared parameters.
         /// </summary>
         /// <param name="data"></param>
-        /// <returns> If creation went well, returns a list of compared parameters, otherwise - 
-        /// throws an exception. </returns>
-        public List<ComparedParam> Create(string choice)
+        /// <returns> If creation went well, returns a list of filtered parameters, otherwise - an
+        /// empty list. </returns>
+        public List<ComparedParam> GetResult(string choice)
         {
             List<ComparedParam> list = ConfigurationComparison.CompareConfig(SourceData, TargetData);
-            List<ComparedParam> chosenList = new();
 
-            if (Enum.TryParse(choice, out ParamAction action))
-                chosenList = list.Where(pair => pair.Action == action).ToList();
+            if (int.TryParse(choice, out int action))
+            {
+                return list.Where(pair => (int)pair.Action == action).ToList().GetIntTypeKeys();
+            }
 
-            if (!chosenList.Any())
-            {
-                throw new NullReferenceException();
-            }
-            else
-            {
-                return chosenList;
-            }
+            return null;
         }
 
     }

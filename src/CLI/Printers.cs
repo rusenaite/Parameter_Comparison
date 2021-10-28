@@ -1,12 +1,10 @@
-﻿using System;
+﻿using ParameterComparison.src.ConfigDataProcessing;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static ParameterComparison.ConfigurationComparison;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.CLI
 {
     public class Printers
     {
@@ -38,10 +36,10 @@ namespace ParameterComparison
         {
             return pair.Action switch
             {
-                ParamAction.U => Console.BackgroundColor = ConsoleColor.Gray,
-                ParamAction.M => Console.BackgroundColor = ConsoleColor.Yellow,
-                ParamAction.R => Console.BackgroundColor = ConsoleColor.Red,
-                ParamAction.A => Console.BackgroundColor = ConsoleColor.Green,
+                ComparisonResult.Unchanged => Console.BackgroundColor = ConsoleColor.Gray,
+                ComparisonResult.Modified => Console.BackgroundColor = ConsoleColor.Yellow,
+                ComparisonResult.Removed => Console.BackgroundColor = ConsoleColor.Red,
+                ComparisonResult.Added => Console.BackgroundColor = ConsoleColor.Green,
                 _ => Console.BackgroundColor,
             };
         }
@@ -78,16 +76,16 @@ namespace ParameterComparison
         /// </summary>
         /// <param name="sourceData"></param>
         /// <param name="targetData"></param>
-        public static void PrintStringTypeIdData(Dictionary<string, string> stringSourceData, Dictionary<string, string> stringTargetData)
+        public static void PrintStringTypeIdData(List<ComparedParam> list)
         {
-            stringSourceData.ToList().ForEach(pair =>
+            list.ForEach(pair =>
             {
-                Console.Write("\n".PadRight(Columns.ColumnWidth) + pair.Key.PadRight(Columns.ColumnWidth) + pair.Value.PadRight(Columns.ColumnWidth));
+                Console.Write("\n".PadRight(Columns.ColumnWidth) + pair.SourcePair.Key.PadRight(Columns.ColumnWidth) + pair.SourcePair.Value.PadRight(Columns.ColumnWidth));
             });
 
-            stringTargetData.ToList().ForEach(pair =>
+            list.ForEach(pair =>
             {
-                Console.Write("\n".PadRight(Columns.ColumnWidth) + pair.Key.PadRight(Columns.ColumnWidth) + pair.Value.PadRight(Columns.ColumnWidth));
+                Console.Write("\n".PadRight(Columns.ColumnWidth) + pair.TargetPair.Key.PadRight(Columns.ColumnWidth) + pair.TargetPair.Value.PadRight(Columns.ColumnWidth));
             });
         }
 
@@ -95,7 +93,7 @@ namespace ParameterComparison
         /// Method prints summary of provided calculated comparison results.
         /// </summary>
         /// <param name="count"></param>
-        public static void PrintComparisonResultsSummary((ParamAction result, int count)[] count)
+        public static void PrintComparisonResultsSummary((ComparisonResult result, int count)[] count)
         {
             count.Where(item => count != null).ToList().ForEach(tuple =>
             {

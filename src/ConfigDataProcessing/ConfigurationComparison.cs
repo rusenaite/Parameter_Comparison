@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.ConfigDataProcessing
 {
     public class ConfigurationComparison
     {
 
-        public (ParamAction result, int count)[] resultCount = new[] { (ParamAction.U, 0), (ParamAction.M, 0), (ParamAction.R, 0), (ParamAction.A, 0) };
+        public (ComparisonResult result, int count)[] resultCount = new[] { (ComparisonResult.Unchanged, 0), (ComparisonResult.Modified, 0), (ComparisonResult.Removed, 0), (ComparisonResult.Added, 0) };
 
         /// <summary>
         /// Method compares integer-key-type source and target data and based on comparison
@@ -29,13 +26,13 @@ namespace ParameterComparison
                 ComparePair(ref targetData, srcPair, ref resultsList);
             }
 
-            foreach(var trgPair in targetData)
+            foreach (var trgPair in targetData)
             {
                 KeyValuePair<string, string> srcPair = default;
 
                 var addedParam = new ComparedParam(srcPair, trgPair)
                 {
-                    Action = ParamAction.A
+                    Action = ComparisonResult.Added
                 };
 
                 resultsList.Add(addedParam);
@@ -69,13 +66,13 @@ namespace ParameterComparison
 
                 ComparedParam removedParam = new ComparedParam(srcPair, trgPair)
                 {
-                    Action = ParamAction.R
+                    Action = ComparisonResult.Removed
                 };
 
                 resultsList.Add(removedParam);
             }
         }
-        
+
         /// <summary>
         /// Method checks whether the passed dictionary contains specific keys.
         /// </summary>
@@ -100,13 +97,9 @@ namespace ParameterComparison
             List<string> keysAsStrings = data.GetKeys();
             List<string> foundKeyList = new();
 
-            bool found;
-
             foreach (var key in keysAsStrings)
             {
-                found = key.StartsWith(value, false, CultureInfo.InvariantCulture);
-
-                if (!found)
+                if (key != null && !key.StartsWith(value, false, CultureInfo.InvariantCulture))
                 {
                     continue;
                 }
@@ -114,9 +107,7 @@ namespace ParameterComparison
                 foundKeyList.Add(key);
             }
 
-            List<ComparedParam> foundPairs = FindDataByKeys(data, foundKeyList);
-
-            return foundPairs;
+            return FindParametersByKeys(data, foundKeyList);
         }
 
         /// <summary>
@@ -126,7 +117,7 @@ namespace ParameterComparison
         /// <param name="keyList"></param>
         /// <returns> If search went well, returns a list of data that contains provided
         /// keys, otherwise - an empty list.</returns>
-        public static List<ComparedParam> FindDataByKeys(List<ComparedParam> data, List<string> keyList)
+        public static List<ComparedParam> FindParametersByKeys(List<ComparedParam> data, List<string> keyList)
         {
             List<ComparedParam> foundPairs = new();
 

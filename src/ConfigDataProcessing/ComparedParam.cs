@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.ConfigDataProcessing
 {
     public class ComparedParam
     {
@@ -16,16 +12,16 @@ namespace ParameterComparison
             {
                 if (source.Value == target.Value)
                 {
-                    Action = ParamAction.U;
+                    Action = ComparisonResult.Unchanged;
                 }
                 else
                 {
-                    Action = ParamAction.M;
+                    Action = ComparisonResult.Modified;
                 }
             }
             else if (!source.Equals(default(KeyValuePair<string, string>)) && target.Equals(default(KeyValuePair<string, string>)))
             {
-                Action = ParamAction.R;
+                Action = ComparisonResult.Removed;
             }
 
             SourcePair = source;
@@ -34,16 +30,16 @@ namespace ParameterComparison
 
         public KeyValuePair<string, string> SourcePair { get; set; }
         public KeyValuePair<string, string> TargetPair { get; set; }
-        public ParamAction Action { get; set; }
+        public ComparisonResult Action { get; set; }
 
         public override string ToString()
         {
-            if (!SourcePair.Key.Equals(default) && TargetPair.Key.Equals(default))
+            if (Action == ComparisonResult.Removed)
             {
                 return Action.ToString().PadRight(ColumnWidth / 2) + SourcePair.Key.ToString().PadRight(ColumnWidth / 2) +
                        SourcePair.Value.PadRight(ColumnWidth);
             }
-            else if(!TargetPair.Key.Equals(default) && SourcePair.Key.Equals(default))
+            else if (Action == ComparisonResult.Added)
             {
                 return Action.ToString().PadRight(ColumnWidth / 2) + TargetPair.Key.ToString().PadRight(ColumnWidth / 2) +
                        "".PadRight(ColumnWidth) + TargetPair.Value.PadRight(ColumnWidth);
@@ -54,11 +50,11 @@ namespace ParameterComparison
         }
     }
 
-    public enum ParamAction
+    public enum ComparisonResult
     {
-        U,
-        A,
-        R,
-        M
+        Unchanged,
+        Added,
+        Removed,
+        Modified
     }
 }

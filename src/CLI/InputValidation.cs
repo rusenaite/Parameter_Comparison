@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ParameterComparison.src.CLI.Controllers;
+using System;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.CLI
 {
-    class InputValidation : IUserInput
+    class InputValidation
     {
-
-        public const string LetterFilter = "^[AMRU]*$";
         public const string IdFilter = @"^\d+$";
         public const string ActionFilter = "^[0-3]$";
 
@@ -19,7 +14,7 @@ namespace ParameterComparison
         /// </summary>
         /// <returns> If entered input is valid, returns chosen action number, otherwise - 
         /// returns a default action number. </returns>
-        public int GetActionChoice(string regex)
+        public static int GetActionChoice(string regex)
         {
             string choice = MainController.ReadLine();
             while (true)
@@ -37,7 +32,7 @@ namespace ParameterComparison
                 }
             }
 
-            int userChoice = Int32.Parse(choice);
+            int userChoice = int.Parse(choice);
             return userChoice;
         }
 
@@ -46,7 +41,7 @@ namespace ParameterComparison
         /// </summary>
         /// <returns> If entered input is valid, returns entered string, 
         /// otherwise - returns an empty string. </returns>
-        public string GetFilter(string regex)
+        public static string GetFilter(string regex)
         {
             string input = MainController.ReadLine();
 

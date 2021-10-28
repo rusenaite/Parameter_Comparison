@@ -1,8 +1,5 @@
-﻿using System;
+﻿using ParameterComparison.src.ConfigDataProcessing;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParameterComparison.src.CLI.Models
 {
@@ -23,18 +20,9 @@ namespace ParameterComparison.src.CLI.Models
         /// <param name="data"></param>
         /// <returns> If creation went well, returns a list of compared parameters, otherwise - 
         /// throws an exception. </returns>
-        public List<ComparedParam> Create()
+        public List<ComparedParam> GetResult()
         {
-            List<ComparedParam> comparedData = ConfigurationComparison.CompareConfig(SourceData, TargetData);
-
-            if (!comparedData.Any())
-            {
-                throw new NullReferenceException();
-            }
-            else
-            {
-                return comparedData;
-            }
+            return ConfigurationComparison.CompareConfig(SourceData, TargetData);
         }
     }
 }
