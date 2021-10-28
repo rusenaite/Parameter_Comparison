@@ -8,6 +8,6 @@ namespace ParameterComparison.src.CLI.Models
 {
     public interface IRequestModel
     {
-        //public List<ComparedParam> Create();
+
     }
 }

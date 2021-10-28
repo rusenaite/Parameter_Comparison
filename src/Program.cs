@@ -22,6 +22,9 @@ namespace ParameterComparison
 
                 var request = printer.GetRequestedModel(requestedAction);
 
+                var requestedDeviceInfoModel = printer.RequestDeviceInfo();
+
+                printer.PrintRequest(requestedDeviceInfoModel);
                 printer.PrintRequest(request);
 
             }

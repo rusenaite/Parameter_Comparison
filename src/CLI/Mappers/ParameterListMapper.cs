@@ -10,7 +10,6 @@ namespace ParameterComparison.src.CLI.Mappers
 {
     public class ParameterListMapper
     {
-
         /// <summary>
         /// Method creates passed model and returns result.
         /// </summary>
@@ -21,6 +20,12 @@ namespace ParameterComparison.src.CLI.Mappers
             return model.Create();
         }
 
+        /// <summary>
+        /// Method prints a list of parameters.
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        /// <param name="result"></param>
         public void Print(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, List<ComparedParam> result)
         {
             Printers.PrintComparedData(result);

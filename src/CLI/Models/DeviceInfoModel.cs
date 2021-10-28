@@ -11,6 +11,14 @@ namespace ParameterComparison.src.CLI.Models
         public static Dictionary<string, string> SourceData;
         public static Dictionary<string, string> TargetData;
 
+        public readonly string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
+                                          DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
+
+        /// <summary>
+        /// Constructor assigns passed source and target data dictionary collections to class fields.
+        /// </summary>
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
         public DeviceInfoModel(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
             SourceData = sourceData;
@@ -25,17 +33,12 @@ namespace ParameterComparison.src.CLI.Models
         /// throws an exception. </returns>
         public Dictionary<string, string> CreateSource()
         {
-            string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
-                              DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
-
-            if (ConfigurationComparison.ContainsKeys(SourceData.GetStringTypeKeys(), keys))
-            {
-                return SourceData.GetStringTypeKeys();
-            }
-            else
+            if (!ConfigurationComparison.ContainsKeys(SourceData.GetStringTypeKeys(), keys))
             {
                 throw new NullReferenceException();
             }
+
+            return SourceData.GetStringTypeKeys();
         }
 
         /// <summary>
@@ -46,17 +49,12 @@ namespace ParameterComparison.src.CLI.Models
         /// throws an exception. </returns>
         public Dictionary<string, string> CreateTarget()
         {
-            string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
-                              DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
-
-            if (ConfigurationComparison.ContainsKeys(TargetData.GetStringTypeKeys(), keys))
-            {
-                return TargetData.GetStringTypeKeys();
-            }
-            else
+            if (!ConfigurationComparison.ContainsKeys(TargetData.GetStringTypeKeys(), keys))
             {
                 throw new NullReferenceException();
             }
+
+            return TargetData.GetStringTypeKeys();
         }
     }
 }

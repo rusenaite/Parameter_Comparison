@@ -10,7 +10,6 @@ namespace ParameterComparison
 {
     public class Printers
     {
-
         /// <summary>
         /// Method prints compared data pairs from a list.
         /// </summary>

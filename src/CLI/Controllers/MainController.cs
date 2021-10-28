@@ -60,23 +60,23 @@ namespace ParameterComparison
         /// otherwise - throws an exception. </returns>
         public IRequestModel GetRequestedModel(int action)
         {
-            switch (action)
+            return action switch
             {
-                case 0:
-                    var parameterListModel = new ParameterListModel(SourceData, TargetData);
-                    return (IRequestModel)parameterListModel;
-                case 1:
-                    var resultSummaryModel = new ResultsSummaryModel(SourceData, TargetData);
-                    return (IRequestModel)resultSummaryModel;
-                case 2:
-                    var filteredDataByIdModel = new FilteredDataByIdModel(SourceData, TargetData);
-                    return (IRequestModel)filteredDataByIdModel;
-                case 3:
-                    var filteredDataByComparisonResultModel = new FilteredDataByComparisonResultModel(SourceData, TargetData);
-                    return (IRequestModel)filteredDataByComparisonResultModel;
-                default:
-                    throw new NotImplementedException();
-            }
+                0 => new ParameterListModel(SourceData, TargetData),
+                1 => new ResultsSummaryModel(SourceData, TargetData),
+                2 => new FilteredDataByIdModel(SourceData, TargetData),
+                3 => new FilteredDataByComparisonResultModel(SourceData, TargetData),
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        /// <summary>
+        /// Method creates a device information model.
+        /// </summary>
+        /// <returns> New <see cref="DeviceInfoModel"> DeviceInfoModel(Dictionary, Dictionary) </see> </returns>
+        public IRequestModel RequestDeviceInfo()
+        {
+            return new DeviceInfoModel(SourceData, TargetData);
         }
 
         /// <summary>
