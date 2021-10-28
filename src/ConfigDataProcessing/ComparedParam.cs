@@ -12,16 +12,16 @@ namespace ParameterComparison.src.ConfigDataProcessing
             {
                 if (source.Value == target.Value)
                 {
-                    Action = ParamAction.U;
+                    Action = ComparisonResult.Unchanged;
                 }
                 else
                 {
-                    Action = ParamAction.M;
+                    Action = ComparisonResult.Modified;
                 }
             }
             else if (!source.Equals(default(KeyValuePair<string, string>)) && target.Equals(default(KeyValuePair<string, string>)))
             {
-                Action = ParamAction.R;
+                Action = ComparisonResult.Removed;
             }
 
             SourcePair = source;
@@ -30,16 +30,16 @@ namespace ParameterComparison.src.ConfigDataProcessing
 
         public KeyValuePair<string, string> SourcePair { get; set; }
         public KeyValuePair<string, string> TargetPair { get; set; }
-        public ParamAction Action { get; set; }
+        public ComparisonResult Action { get; set; }
 
         public override string ToString()
         {
-            if (Action == ParamAction.R)
+            if (Action == ComparisonResult.Removed)
             {
                 return Action.ToString().PadRight(ColumnWidth / 2) + SourcePair.Key.ToString().PadRight(ColumnWidth / 2) +
                        SourcePair.Value.PadRight(ColumnWidth);
             }
-            else if (Action == ParamAction.A)
+            else if (Action == ComparisonResult.Added)
             {
                 return Action.ToString().PadRight(ColumnWidth / 2) + TargetPair.Key.ToString().PadRight(ColumnWidth / 2) +
                        "".PadRight(ColumnWidth) + TargetPair.Value.PadRight(ColumnWidth);
@@ -50,11 +50,11 @@ namespace ParameterComparison.src.ConfigDataProcessing
         }
     }
 
-    public enum ParamAction
+    public enum ComparisonResult
     {
-        U,
-        A,
-        R,
-        M
+        Unchanged,
+        Added,
+        Removed,
+        Modified
     }
 }

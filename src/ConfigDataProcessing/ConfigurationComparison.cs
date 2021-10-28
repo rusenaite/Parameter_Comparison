@@ -7,7 +7,7 @@ namespace ParameterComparison.src.ConfigDataProcessing
     public class ConfigurationComparison
     {
 
-        public (ParamAction result, int count)[] resultCount = new[] { (ParamAction.U, 0), (ParamAction.M, 0), (ParamAction.R, 0), (ParamAction.A, 0) };
+        public (ComparisonResult result, int count)[] resultCount = new[] { (ComparisonResult.Unchanged, 0), (ComparisonResult.Modified, 0), (ComparisonResult.Removed, 0), (ComparisonResult.Added, 0) };
 
         /// <summary>
         /// Method compares integer-key-type source and target data and based on comparison
@@ -32,7 +32,7 @@ namespace ParameterComparison.src.ConfigDataProcessing
 
                 var addedParam = new ComparedParam(srcPair, trgPair)
                 {
-                    Action = ParamAction.A
+                    Action = ComparisonResult.Added
                 };
 
                 resultsList.Add(addedParam);
@@ -66,7 +66,7 @@ namespace ParameterComparison.src.ConfigDataProcessing
 
                 ComparedParam removedParam = new ComparedParam(srcPair, trgPair)
                 {
-                    Action = ParamAction.R
+                    Action = ComparisonResult.Removed
                 };
 
                 resultsList.Add(removedParam);

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="src\CLI\Services\" />
+    <Folder Include="src\Services\" />
   </ItemGroup>
 	  
 </Project>

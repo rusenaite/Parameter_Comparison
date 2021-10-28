@@ -1,4 +1,5 @@
-﻿using ParameterComparison.src.CLI.Controllers;
+﻿using ParameterComparison.src.CLI;
+using ParameterComparison.src.CLI.Controllers;
 using System;
 
 namespace ParameterComparison.src
@@ -12,11 +13,10 @@ namespace ParameterComparison.src
             try
             {
                 var printer = new MainController(sourcePath, targetPath);
-                var inputValidator = new InputValidation();
 
                 printer.PrintMainMenu();
 
-                var requestedAction = printer.GetAction(inputValidator);
+                var requestedAction = printer.GetAction();
 
                 var request = printer.GetRequestedModel(requestedAction);
 

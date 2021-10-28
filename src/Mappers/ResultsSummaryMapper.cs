@@ -10,7 +10,7 @@ namespace ParameterComparison.src.CLI.Mappers
         /// </summary>
         /// <param name="model"></param>
         /// <returns> If creation went well, returns an array of results, otherwise - an empty array. </returns>
-        public (ParamAction, int)[] Map(ResultsSummaryModel model)
+        public (ComparisonResult, int)[] Map(ResultsSummaryModel model)
         {
             return model.GetResult();
         }
@@ -19,7 +19,7 @@ namespace ParameterComparison.src.CLI.Mappers
         /// Method prints parameter comparison results.
         /// </summary>
         /// <param name="result"></param>
-        public void Print((ParamAction, int)[] result)
+        public void Print((ComparisonResult, int)[] result)
         {
             Printers.PrintComparisonResultsSummary(result);
         }

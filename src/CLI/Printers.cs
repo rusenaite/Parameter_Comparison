@@ -36,10 +36,10 @@ namespace ParameterComparison.src.CLI
         {
             return pair.Action switch
             {
-                ParamAction.U => Console.BackgroundColor = ConsoleColor.Gray,
-                ParamAction.M => Console.BackgroundColor = ConsoleColor.Yellow,
-                ParamAction.R => Console.BackgroundColor = ConsoleColor.Red,
-                ParamAction.A => Console.BackgroundColor = ConsoleColor.Green,
+                ComparisonResult.Unchanged => Console.BackgroundColor = ConsoleColor.Gray,
+                ComparisonResult.Modified => Console.BackgroundColor = ConsoleColor.Yellow,
+                ComparisonResult.Removed => Console.BackgroundColor = ConsoleColor.Red,
+                ComparisonResult.Added => Console.BackgroundColor = ConsoleColor.Green,
                 _ => Console.BackgroundColor,
             };
         }
@@ -93,7 +93,7 @@ namespace ParameterComparison.src.CLI
         /// Method prints summary of provided calculated comparison results.
         /// </summary>
         /// <param name="count"></param>
-        public static void PrintComparisonResultsSummary((ParamAction result, int count)[] count)
+        public static void PrintComparisonResultsSummary((ComparisonResult result, int count)[] count)
         {
             count.Where(item => count != null).ToList().ForEach(tuple =>
             {

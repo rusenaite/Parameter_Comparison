@@ -32,10 +32,7 @@ namespace ParameterComparison.src.CLI.Controllers
         /// </summary>
         /// <param name="inputValidator"></param>
         /// <returns> Calls method <see cref="InputValidation.GetActionChoice(string)"> GetActionChoice(string) </see> </returns>
-        internal int GetAction(InputValidation inputValidator)
-        {
-            return inputValidator.GetActionChoice(InputValidation.ActionFilter);
-        }
+        public int GetAction() => InputValidation.GetActionChoice(InputValidation.ActionFilter);
 
         /// <summary>
         /// Method calls user input validation for entering input of selected filter.
@@ -43,10 +40,7 @@ namespace ParameterComparison.src.CLI.Controllers
         /// <param name="inputValidator"></param>
         /// <param name="filter"></param>
         /// <returns> Calls method <see cref="InputValidation.GetFilter(string)"> GetFilter(string) </see> </returns>
-        internal static string GetFilter(InputValidation inputValidator, string filter)
-        {
-            return inputValidator.GetFilter(filter);
-        }
+        public static string GetFilter(string filter) => InputValidation.GetFilter(filter);
 
         /// <summary>
         /// Method returns requested model by passed action parameter.
@@ -94,11 +88,11 @@ namespace ParameterComparison.src.CLI.Controllers
         public static void PrintComparisonResultChoices()
         {
             Console.WriteLine(@"Select action You would like to perform:" +
-                                "\n[U] Unchanged" +
-                                "\n[A] Added" +
-                                "\n[M] Modified" +
-                                "\n[R] Removed" +
-                                "\n\nEnter your choice (one of 4 capital letters):");
+                                "\n[0] Unchanged" +
+                                "\n[1] Added" +
+                                "\n[2] Modified" +
+                                "\n[3] Removed" +
+                                "\n\nEnter your choice (number from interval [ 0 ; 3 ]):");
         }
 
         /// <summary>
@@ -166,8 +160,8 @@ namespace ParameterComparison.src.CLI.Controllers
             var mapper = new FilteredDataByComparisonResultMapper();
 
             PrintComparisonResultChoices();
-            InputValidation inputValidation = new();
-            var choice = GetFilter(inputValidation, InputValidation.LetterFilter);
+
+            var choice = GetFilter(InputValidation.ActionFilter);
 
             var result = mapper.Map(model, choice);
             mapper.Print(result);
@@ -181,8 +175,7 @@ namespace ParameterComparison.src.CLI.Controllers
         {
             var mapper = new FilteredDataByIdMapper();
 
-            InputValidation inputValidation = new();
-            var id = GetFilter(inputValidation, InputValidation.IdFilter);
+            var id = GetFilter(InputValidation.IdFilter);
 
             var result = mapper.Map(model, id);
             mapper.Print(result);

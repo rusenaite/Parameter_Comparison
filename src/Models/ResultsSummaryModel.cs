@@ -21,7 +21,7 @@ namespace ParameterComparison.src.CLI.Models
         /// <param name="data"></param>
         /// <returns> If creation went well, returns a list of compared parameters, otherwise - 
         /// throws an exception. </returns>
-        public (ParamAction, int)[] GetResult()
+        public (ComparisonResult, int)[] GetResult()
         {
             List<ComparedParam> list = CompareConfig(SourceData, TargetData);
 
