@@ -2,12 +2,8 @@
 using ParameterComparison.src.CLI.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.CLI.Controllers
 {
     public class MainController
     {
@@ -89,7 +85,7 @@ namespace ParameterComparison
                                 "\n[1] Summary of results" +
                                 "\n[2] Filter parameters by entered ID" +
                                 "\n[3] Filter parameters by comparison result" +
-                                "\n\nEnter your choice (number from interval [ 0 ; 3 ]:");
+                                "\n\nEnter your choice (number from interval [ 0 ; 3 ]):");
         }
 
         /// <summary>
@@ -215,8 +211,8 @@ namespace ParameterComparison
         {
             var mapper = new ParameterListMapper();
             var result = mapper.Map(model);
-            mapper.Print(ParameterListModel.SourceData, ParameterListModel.TargetData, result);
+            mapper.Print(result);
         }
-        
+
     }
 }

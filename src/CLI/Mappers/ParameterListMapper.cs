@@ -1,10 +1,7 @@
 ﻿using ParameterComparison.src.CLI.Models;
-using ParameterComparison.src;
-using System;
+using ParameterComparison.src.ConfigDataProcessing;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParameterComparison.src.CLI.Mappers
 {
@@ -17,19 +14,21 @@ namespace ParameterComparison.src.CLI.Mappers
         /// <returns> If creation went well, returns a list of parameters, otherwise - an empty list. </returns>
         public List<ComparedParam> Map(ParameterListModel model)
         {
-            return model.Create();
+            return model.GetResult();
         }
 
         /// <summary>
         /// Method prints a list of parameters.
         /// </summary>
-        /// <param name="sourceData"></param>
-        /// <param name="targetData"></param>
         /// <param name="result"></param>
-        public void Print(Dictionary<string, string> sourceData, Dictionary<string, string> targetData, List<ComparedParam> result)
+        public void Print(List<ComparedParam> result)
         {
-            Printers.PrintComparedData(result);
-            Printers.PrintStringTypeIdData(sourceData.GetStringTypeKeys().RemovedDeviceInfo(), targetData.GetStringTypeKeys().RemovedDeviceInfo());
+            Printers.PrintComparedData(result.GetIntTypeKeys());
+
+            if (result.GetStringTypeKeys().RemovedDeviceInfo().Any())
+            {
+                Printers.PrintStringTypeIdData(result.GetStringTypeKeys().RemovedDeviceInfo());
+            }
         }
 
     }

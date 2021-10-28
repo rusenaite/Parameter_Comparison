@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ParameterComparison.src.CLI.Controllers;
+using System;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.CLI
 {
     class InputValidation : IUserInput
     {
@@ -37,7 +34,7 @@ namespace ParameterComparison
                 }
             }
 
-            int userChoice = Int32.Parse(choice);
+            int userChoice = int.Parse(choice);
             return userChoice;
         }
 

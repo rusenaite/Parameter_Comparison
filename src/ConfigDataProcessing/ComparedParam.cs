@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.ConfigDataProcessing
 {
     public class ComparedParam
     {
@@ -38,12 +34,12 @@ namespace ParameterComparison
 
         public override string ToString()
         {
-            if (!SourcePair.Key.Equals(default) && TargetPair.Key.Equals(default))
+            if (Action == ParamAction.R)
             {
                 return Action.ToString().PadRight(ColumnWidth / 2) + SourcePair.Key.ToString().PadRight(ColumnWidth / 2) +
                        SourcePair.Value.PadRight(ColumnWidth);
             }
-            else if(!TargetPair.Key.Equals(default) && SourcePair.Key.Equals(default))
+            else if (Action == ParamAction.A)
             {
                 return Action.ToString().PadRight(ColumnWidth / 2) + TargetPair.Key.ToString().PadRight(ColumnWidth / 2) +
                        "".PadRight(ColumnWidth) + TargetPair.Value.PadRight(ColumnWidth);

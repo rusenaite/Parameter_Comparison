@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ParameterComparison
+namespace ParameterComparison.src.ConfigDataProcessing
 {
     public static class DataFilteringExtensions
     {
@@ -18,30 +14,59 @@ namespace ParameterComparison
         /// otherwise - an empty dictionary. </returns>
         public static Dictionary<string, string> GetStringTypeKeys(this Dictionary<string, string> data)
         {
-            return data.Where(pair => !(int.TryParse(pair.Key, out int key))).ToDictionary(p => p.Key, p => p.Value);
+            return data.Where(pair => !int.TryParse(pair.Key, out int key)).ToDictionary(p => p.Key, p => p.Value);
+        }
+
+        public static List<ComparedParam> GetStringTypeKeys(this List<ComparedParam> data)
+        {
+            foreach (var item in data.ToList())
+            {
+                if (int.TryParse(item.SourcePair.Key, out _) | int.TryParse(item.TargetPair.Key, out _))
+                {
+                    data.Remove(item);
+                }
+            }
+
+            return data;
+        }
+
+        public static List<ComparedParam> GetIntTypeKeys(this List<ComparedParam> data)
+        {
+            foreach (var item in data.ToList())
+            {
+                if (!int.TryParse(item.SourcePair.Key, out _) | !int.TryParse(item.TargetPair.Key, out _))
+                {
+                    data.Remove(item);
+                }
+            }
+
+            return data;
         }
 
         /// <summary>
-        /// Method removes string type keys (and its value) from the dictionary which contain 
+        /// Method removes string type keys (and its value) from the list which contain 
         /// device information.
         /// </summary>
         /// <param name="stringData"></param>
-        /// <returns> If removing went well returns dictionary collection of string key type
-        /// without device information, otherwise - an empty dictionary. </returns>
-        public static Dictionary<string, string> RemovedDeviceInfo(this Dictionary<string, string> stringData)
+        /// <returns> If removing went well returns list collection of string key type
+        /// without device information, otherwise - an empty list. </returns>
+        public static List<ComparedParam> RemovedDeviceInfo(this List<ComparedParam> list)
         {
             string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
                               DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
 
             for (int i = 0; i < keys.Length; ++i)
             {
-                if (stringData.ContainsKey(keys[i]))
+                foreach (var item in list)
                 {
-                    stringData.Remove(keys[i]);
+                    if (item.SourcePair.Key == keys[i] | item.TargetPair.Key == keys[i])
+                    {
+                        list.Remove(item);
+                    }
                 }
             }
 
-            return stringData;
+            return list;
         }
 
         /// <summary>

@@ -4,5 +4,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="src\CLI\Services\" />
+  </ItemGroup>
 	  
 </Project>
