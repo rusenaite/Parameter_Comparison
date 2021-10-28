@@ -28,7 +28,7 @@ namespace ParameterComparison.src.CLI.Models
             List<ComparedParam> list = ConfigurationComparison.CompareConfig(SourceData, TargetData);
             List<ComparedParam> chosenList = new();
 
-            if (Enum.TryParse<ParamAction>(choice, out ParamAction action))
+            if (Enum.TryParse(choice, out ParamAction action))
                 chosenList = list.Where(pair => pair.Action == action).ToList();
 
             if (!chosenList.Any())

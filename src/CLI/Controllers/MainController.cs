@@ -9,63 +9,74 @@ using System.Threading.Tasks;
 
 namespace ParameterComparison
 {
-    public class UIPrinter
+    public class MainController
     {
         private static string sourcePath;
         private static string targetPath;
 
-        public static Dictionary<string, string> SourceData
-        {
-            get => SourceData;
-            set => FileReader.ReadGZippedFiles(sourcePath);
-        }
-
-        public static Dictionary<string, string> TargetData
-        {
-            get => TargetData;
-            set => FileReader.ReadGZippedFiles(targetPath);
-        }
+        public Dictionary<string, string> SourceData { get; set; }
+        public Dictionary<string, string> TargetData { get; set; }
 
         /// <summary>
         /// Constructor sets passed source and target paths.
         /// </summary>
         /// <param name="_sourcePath"></param>
         /// <param name="_targetPath"></param>
-        public UIPrinter(string _sourcePath, string _targetPath)
+        public MainController(string _sourcePath, string _targetPath)
         {
             sourcePath = _sourcePath;
             targetPath = _targetPath;
+
+            SourceData = FileReader.ReadGZippedFiles(sourcePath);
+            TargetData = FileReader.ReadGZippedFiles(targetPath);
         }
 
+        /// <summary>
+        /// Method calls user input validation for entering action choice.
+        /// </summary>
+        /// <param name="inputValidator"></param>
+        /// <returns> Calls method <see cref="InputValidation.GetActionChoice(string)"> GetActionChoice(string) </see> </returns>
         internal int GetAction(InputValidation inputValidator)
         {
             return inputValidator.GetActionChoice(InputValidation.ActionFilter);
         }
 
+        /// <summary>
+        /// Method calls user input validation for entering input of selected filter.
+        /// </summary>
+        /// <param name="inputValidator"></param>
+        /// <param name="filter"></param>
+        /// <returns> Calls method <see cref="InputValidation.GetFilter(string)"> GetFilter(string) </see> </returns>
         internal static string GetFilter(InputValidation inputValidator, string filter)
         {
             return inputValidator.GetFilter(filter);
         }
 
+        /// <summary>
+        /// Method returns requested model by passed action parameter.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns> If available action parameter passed, returns one of the request models,
+        /// otherwise - throws an exception. </returns>
         public IRequestModel GetRequestedModel(int action)
         {
-            switch (action)
+            return action switch
             {
-                case 0:
-                    var parameterListModel = new ParameterListModel(SourceData, TargetData);
-                    return (IRequestModel)parameterListModel;
-                case 1:
-                    var resultSummaryModel = new ResultsSummaryModel(SourceData, TargetData);
-                    return (IRequestModel)resultSummaryModel;
-                case 2:
-                    var filteredDataByIdModel = new FilteredDataByIdModel(SourceData, TargetData);
-                    return (IRequestModel)filteredDataByIdModel;
-                case 3:
-                    var filteredDataByComparisonResultModel = new FilteredDataByComparisonResultModel(SourceData, TargetData);
-                    return (IRequestModel)filteredDataByComparisonResultModel;
-                default:
-                    throw new NotImplementedException();
-            }
+                0 => new ParameterListModel(SourceData, TargetData),
+                1 => new ResultsSummaryModel(SourceData, TargetData),
+                2 => new FilteredDataByIdModel(SourceData, TargetData),
+                3 => new FilteredDataByComparisonResultModel(SourceData, TargetData),
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        /// <summary>
+        /// Method creates a device information model.
+        /// </summary>
+        /// <returns> New <see cref="DeviceInfoModel"> DeviceInfoModel(Dictionary, Dictionary) </see> </returns>
+        public IRequestModel RequestDeviceInfo()
+        {
+            return new DeviceInfoModel(SourceData, TargetData);
         }
 
         /// <summary>
@@ -94,63 +105,55 @@ namespace ParameterComparison
                                 "\n\nEnter your choice (one of 4 capital letters):");
         }
 
+        /// <summary>
+        /// Method reads input from standart input stream.
+        /// </summary>
+        /// <returns> Reading from input stream. </returns>
         public static string ReadLine()
         {
             return Console.ReadLine();
         }
 
+        /// <summary>
+        /// Method prints error for incorrectly entered input.
+        /// </summary>
         public static void PrintInputError()
         {
             Console.Error.Write("[ Error ]: Unavailable input entered. Re-enter your choice: ");
         }
 
+        /// <summary>
+        /// Method prints data action requested by a passed model.
+        /// </summary>
+        /// <param name="model"></param>
         public void PrintRequest(IRequestModel model)
         {
-            var devInfoModel = new DeviceInfoModel(SourceData, TargetData);
-            var parameterListModel = new ParameterListModel(SourceData, TargetData);
-            var filteredByComparisonResultModel = new FilteredDataByComparisonResultModel(SourceData, TargetData);
-            var filteredByIdModel = new FilteredDataByIdModel(SourceData, TargetData);
-            var resultSummaryModel = new ResultsSummaryModel(SourceData, TargetData);
-
-            if (model.GetType() == devInfoModel.GetType())
-            {
-                PrintDeviceInfo(devInfoModel);
-            }
-            else if (model.GetType() == parameterListModel.GetType())
-            {
-                PrintParametersList(parameterListModel);
-            }
-            else if (model.GetType() == filteredByIdModel.GetType())
-            {
-                PrintFilteredByIdList(filteredByIdModel);
-            }
-            else if (model.GetType() == filteredByComparisonResultModel.GetType())
-            {
-                PrintFilteredByComparisonResultList(filteredByComparisonResultModel);
-            }
-            else if (model.GetType() == resultSummaryModel.GetType())
-            {
-                PrintResultSummary(resultSummaryModel);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-
-            /*
-            switch (model.GetType())
+            switch (model)
             {
                 case DeviceInfoModel:
-                    PrintDeviceInfo(model);
+                    PrintDeviceInfo((DeviceInfoModel)model);
                     break;
-                case typeof(ParameterListModel):
-                    PrintParametersList(model);
+                case ParameterListModel:
+                    PrintParametersList((ParameterListModel)model);
                     break;
+                case FilteredDataByIdModel:
+                    PrintFilteredByIdList((FilteredDataByIdModel)model);
+                    break;
+                case FilteredDataByComparisonResultModel:
+                    PrintFilteredByComparisonResultList((FilteredDataByComparisonResultModel)model);
+                    break;
+                case ResultsSummaryModel:
+                    PrintResultSummary((ResultsSummaryModel)model);
+                    break;
+                default:
+                    throw new NotImplementedException();
             }
-            */
-
         }
 
+        /// <summary>
+        /// Method prints result summary.
+        /// </summary>
+        /// <param name="model"></param>
         private static void PrintResultSummary(ResultsSummaryModel model)
         {
             var mapper = new ResultsSummaryMapper();
@@ -158,6 +161,10 @@ namespace ParameterComparison
             mapper.Print(result);
         }
 
+        /// <summary>
+        /// Method prints compared parameters list filtered by entered comparison result.
+        /// </summary>
+        /// <param name="model"></param>
         private static void PrintFilteredByComparisonResultList(FilteredDataByComparisonResultModel model)
         {
             var mapper = new FilteredDataByComparisonResultMapper();
@@ -170,17 +177,25 @@ namespace ParameterComparison
             mapper.Print(result);
         }
 
+        /// <summary>
+        /// Method prints compared parameter list filtered by enter ID (or a part of ID value).
+        /// </summary>
+        /// <param name="model"></param>
         private static void PrintFilteredByIdList(FilteredDataByIdModel model)
         {
             var mapper = new FilteredDataByIdMapper();
 
             InputValidation inputValidation = new();
-            var id = GetFilter(inputValidation, InputValidation.LetterFilter);
+            var id = GetFilter(inputValidation, InputValidation.IdFilter);
 
             var result = mapper.Map(model, id);
             mapper.Print(result);
         }
 
+        /// <summary>
+        /// Method prints device configuration information.
+        /// </summary>
+        /// <param name="model"></param>
         public static void PrintDeviceInfo(DeviceInfoModel model)
         {
             var mapper = new DeviceInfoMapper();
@@ -192,6 +207,10 @@ namespace ParameterComparison
             mapper.Print(targetResult, targetPath);
         }
 
+        /// <summary>
+        /// Method prints compared parameter list.
+        /// </summary>
+        /// <param name="model"></param>
         public static void PrintParametersList(ParameterListModel model)
         {
             var mapper = new ParameterListMapper();

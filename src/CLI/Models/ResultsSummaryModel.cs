@@ -25,7 +25,7 @@ namespace ParameterComparison.src.CLI.Models
         /// throws an exception. </returns>
         public (ParamAction, int)[] Create()
         {
-            List<ComparedParam> list = ConfigurationComparison.CompareConfig(SourceData, TargetData);
+            List<ComparedParam> list = CompareConfig(SourceData, TargetData);
 
             for (int i = 0; i < resultCount.Length; ++i)
             {
