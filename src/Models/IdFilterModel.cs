@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace ParameterComparison.src.Models
 {
-    public class ParameterListModel : IRequestModel
+    public class IdFilterModel : IRequestModel
     {
-        public List<ComparedParam> ParameterList { get; set; }
+        public List<ComparedParam> FilteredDataById { get; set; }
     }
 }

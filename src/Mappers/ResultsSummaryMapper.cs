@@ -1,27 +1,33 @@
-﻿using ParameterComparison.src.CLI.Models;
+﻿using ParameterComparison.src.Models;
 using ParameterComparison.src.ConfigDataProcessing;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ParameterComparison.src.CLI.Mappers
 {
     public class ResultsSummaryMapper
     {
-        /// <summary>
-        /// Method creates passed model and returns result.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns> If creation went well, returns an array of results, otherwise - an empty array. </returns>
-        public (ComparisonResult, int)[] Map(ResultsSummaryModel model)
+        public Dictionary<string, string> SourceData;
+        public Dictionary<string, string> TargetData;
+
+        public ResultsSummaryMapper(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            return model.GetResult();
+            SourceData = sourceData;
+            TargetData = targetData;
         }
 
-        /// <summary>
-        /// Method prints parameter comparison results.
-        /// </summary>
-        /// <param name="result"></param>
-        public void Print((ComparisonResult, int)[] result)
+        public ResultsSummaryModel Map(ResultsSummaryModel model)
         {
-            Printers.PrintComparisonResultsSummary(result);
+            model.ComparedData = ConfigurationComparison.CompareConfig(SourceData, TargetData);
+
+            for (int i = 0; i < ConfigurationComparison.resultCount.Capacity; ++i)
+            {
+                ConfigurationComparison.resultCount[i].Count = model.ComparedData.Where(pair => pair.Action == ConfigurationComparison.resultCount[i].Result).Count();
+            }
+
+            model.ResultCount = ConfigurationComparison.resultCount.ToList();
+
+            return model;
         }
     }
 }

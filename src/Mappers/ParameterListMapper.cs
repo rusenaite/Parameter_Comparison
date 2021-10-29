@@ -1,4 +1,4 @@
-﻿using ParameterComparison.src.CLI.Models;
+﻿using ParameterComparison.src.Models;
 using ParameterComparison.src.ConfigDataProcessing;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,29 +7,24 @@ namespace ParameterComparison.src.CLI.Mappers
 {
     public class ParameterListMapper
     {
-        /// <summary>
-        /// Method creates passed model and returns result.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns> If creation went well, returns a list of parameters, otherwise - an empty list. </returns>
-        public List<ComparedParam> Map(ParameterListModel model)
-        {
-            return model.GetResult();
-        }
+        public Dictionary<string, string> SourceData;
+        public Dictionary<string, string> TargetData;
 
         /// <summary>
-        /// Method prints a list of parameters.
+        /// Constructor assigns passed source and target data dictionary collections to class fields.
         /// </summary>
-        /// <param name="result"></param>
-        public void Print(List<ComparedParam> result)
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        public ParameterListMapper(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            Printers.PrintComparedData(result.GetIntTypeKeys());
-
-            if (result.GetStringTypeKeys().RemovedDeviceInfo().Any())
-            {
-                Printers.PrintStringTypeIdData(result.GetStringTypeKeys().RemovedDeviceInfo());
-            }
+            SourceData = sourceData;
+            TargetData = targetData;
         }
 
+        public ParameterListModel Map(ParameterListModel model)
+        {
+            model.ParameterList = ConfigurationComparison.CompareConfig(SourceData, TargetData);
+            return model;
+        }
     }
 }

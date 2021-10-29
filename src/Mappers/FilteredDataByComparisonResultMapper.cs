@@ -1,28 +1,32 @@
-﻿using ParameterComparison.src.CLI.Models;
+﻿using ParameterComparison.src.Models;
 using ParameterComparison.src.ConfigDataProcessing;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace ParameterComparison.src.CLI.Mappers
 {
     public class FilteredDataByComparisonResultMapper
     {
-        /// <summary>
-        /// Method creates passed model and returns result list.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns> If creation went well, returns a list of parameters, otherwise - an empty list. </returns>
-        public List<ComparedParam> Map(FilteredDataByComparisonResultModel model, string choice)
+        public Dictionary<string, string> SourceData;
+        public Dictionary<string, string> TargetData;
+
+        public FilteredDataByComparisonResultMapper(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            return model.GetResult(choice);
+            SourceData = sourceData;
+            TargetData = targetData;
         }
 
-        /// <summary>
-        /// Method prints a list of filtered compared parameters.
-        /// </summary>
-        /// <param name="result"></param>
-        public void Print(List<ComparedParam> result)
+        public ComparisonResultFilterModel Map(ComparisonResultFilterModel model, string choice)
         {
-            Printers.PrintComparedData(result);
+            model.FilteredDataByComparisonResult = ConfigurationComparison.CompareConfig(SourceData, TargetData);
+
+            if (int.TryParse(choice, out int action))
+            {
+                model.FilteredDataByComparisonResult = model.FilteredDataByComparisonResult.Where(pair => (int)pair.Action == action).ToList();
+            }
+
+            return model;
         }
     }
 }

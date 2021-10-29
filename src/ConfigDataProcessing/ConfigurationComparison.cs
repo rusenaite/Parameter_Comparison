@@ -7,7 +7,13 @@ namespace ParameterComparison.src.ConfigDataProcessing
     public class ConfigurationComparison
     {
 
-        public (ComparisonResult result, int count)[] resultCount = new[] { (ComparisonResult.Unchanged, 0), (ComparisonResult.Modified, 0), (ComparisonResult.Removed, 0), (ComparisonResult.Added, 0) };
+        public static List<ComparisonResultCount> resultCount = new()
+        {
+            new ComparisonResultCount(ComparisonResult.Unchanged, default),
+            new ComparisonResultCount(ComparisonResult.Modified, default),
+            new ComparisonResultCount(ComparisonResult.Removed, default),
+            new ComparisonResultCount(ComparisonResult.Added, default)
+        };
 
         /// <summary>
         /// Method compares integer-key-type source and target data and based on comparison
@@ -55,7 +61,7 @@ namespace ParameterComparison.src.ConfigDataProcessing
             {
                 var trgPair = targetData.FirstOrDefault(pair => pair.Key == trgKey);
 
-                ComparedParam comparedParam = new ComparedParam(srcPair, trgPair);
+                var comparedParam = new ComparedParam(srcPair, trgPair);
 
                 targetData.Remove(trgPair.Key);
                 resultsList.Add(comparedParam);
@@ -64,7 +70,7 @@ namespace ParameterComparison.src.ConfigDataProcessing
             {
                 KeyValuePair<string, string> trgPair = default;
 
-                ComparedParam removedParam = new ComparedParam(srcPair, trgPair)
+                var removedParam = new ComparedParam(srcPair, trgPair)
                 {
                     Action = ComparisonResult.Removed
                 };

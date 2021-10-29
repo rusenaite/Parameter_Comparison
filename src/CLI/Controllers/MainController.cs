@@ -1,5 +1,5 @@
 ﻿using ParameterComparison.src.CLI.Mappers;
-using ParameterComparison.src.CLI.Models;
+using ParameterComparison.src.Models;
 using System;
 using System.Collections.Generic;
 
@@ -52,10 +52,10 @@ namespace ParameterComparison.src.CLI.Controllers
         {
             return action switch
             {
-                0 => new ParameterListModel(SourceData, TargetData),
-                1 => new ResultsSummaryModel(SourceData, TargetData),
-                2 => new FilteredDataByIdModel(SourceData, TargetData),
-                3 => new FilteredDataByComparisonResultModel(SourceData, TargetData),
+                0 => new ParameterListModel(),
+                1 => new ResultsSummaryModel(),
+                2 => new IdFilterModel(),
+                3 => new ComparisonResultFilterModel(),
                 _ => throw new NotImplementedException()
             };
         }
@@ -66,7 +66,7 @@ namespace ParameterComparison.src.CLI.Controllers
         /// <returns> New <see cref="DeviceInfoModel"> DeviceInfoModel(Dictionary, Dictionary) </see> </returns>
         public IRequestModel RequestDeviceInfo()
         {
-            return new DeviceInfoModel(SourceData, TargetData);
+            return new DeviceInfoModel();
         }
 
         /// <summary>
@@ -126,11 +126,11 @@ namespace ParameterComparison.src.CLI.Controllers
                 case ParameterListModel:
                     PrintParametersList((ParameterListModel)model);
                     break;
-                case FilteredDataByIdModel:
-                    PrintFilteredByIdList((FilteredDataByIdModel)model);
+                case IdFilterModel:
+                    PrintFilteredByIdList((IdFilterModel)model);
                     break;
-                case FilteredDataByComparisonResultModel:
-                    PrintFilteredByComparisonResultList((FilteredDataByComparisonResultModel)model);
+                case ComparisonResultFilterModel:
+                    PrintFilteredByComparisonResultList((ComparisonResultFilterModel)model);
                     break;
                 case ResultsSummaryModel:
                     PrintResultSummary((ResultsSummaryModel)model);
@@ -144,68 +144,62 @@ namespace ParameterComparison.src.CLI.Controllers
         /// Method prints result summary.
         /// </summary>
         /// <param name="model"></param>
-        private static void PrintResultSummary(ResultsSummaryModel model)
+        private void PrintResultSummary(ResultsSummaryModel model)
         {
-            var mapper = new ResultsSummaryMapper();
+            var mapper = new ResultsSummaryMapper(SourceData, TargetData);
             var result = mapper.Map(model);
-            mapper.Print(result);
+            ModelPrinter.PrintResultSummaryModel(result);
         }
 
         /// <summary>
         /// Method prints compared parameters list filtered by entered comparison result.
         /// </summary>
         /// <param name="model"></param>
-        private static void PrintFilteredByComparisonResultList(FilteredDataByComparisonResultModel model)
+        private void PrintFilteredByComparisonResultList(ComparisonResultFilterModel model)
         {
-            var mapper = new FilteredDataByComparisonResultMapper();
+            var mapper = new FilteredDataByComparisonResultMapper(SourceData, TargetData);
 
             PrintComparisonResultChoices();
-
             var choice = GetFilter(InputValidation.ActionFilter);
 
             var result = mapper.Map(model, choice);
-            mapper.Print(result);
+            ModelPrinter.PrintFilteredDataByComparisonResultModel(result);
         }
 
         /// <summary>
         /// Method prints compared parameter list filtered by enter ID (or a part of ID value).
         /// </summary>
         /// <param name="model"></param>
-        private static void PrintFilteredByIdList(FilteredDataByIdModel model)
+        public void PrintFilteredByIdList(IdFilterModel model)
         {
-            var mapper = new FilteredDataByIdMapper();
+            var mapper = new FilteredDataByIdMapper(SourceData, TargetData);
 
             var id = GetFilter(InputValidation.IdFilter);
 
             var result = mapper.Map(model, id);
-            mapper.Print(result);
+            ModelPrinter.PrintFilteredDataByIdModel(result);
         }
 
         /// <summary>
         /// Method prints device configuration information.
         /// </summary>
         /// <param name="model"></param>
-        public static void PrintDeviceInfo(DeviceInfoModel model)
+        public void PrintDeviceInfo(DeviceInfoModel model)
         {
-            var mapper = new DeviceInfoMapper();
-
-            var sourceResult = mapper.MapSource(model);
-            var targetResult = mapper.MapTarget(model);
-
-            mapper.Print(sourceResult, sourcePath);
-            mapper.Print(targetResult, targetPath);
+            var mapper = new DeviceInfoMapper(SourceData, TargetData, sourcePath, targetPath);
+            var result = mapper.Map(model);
+            ModelPrinter.PrintDeviceInfoModel(result);
         }
 
         /// <summary>
         /// Method prints compared parameter list.
         /// </summary>
         /// <param name="model"></param>
-        public static void PrintParametersList(ParameterListModel model)
+        public void PrintParametersList(ParameterListModel model)
         {
-            var mapper = new ParameterListMapper();
+            var mapper = new ParameterListMapper(SourceData, TargetData);
             var result = mapper.Map(model);
-            mapper.Print(result);
+            ModelPrinter.PrintParameterListModel(result);
         }
-
     }
 }

@@ -93,12 +93,15 @@ namespace ParameterComparison.src.CLI
         /// Method prints summary of provided calculated comparison results.
         /// </summary>
         /// <param name="count"></param>
-        public static void PrintComparisonResultsSummary((ComparisonResult result, int count)[] count)
+        public static void PrintComparisonResultsSummary(List<ComparisonResultCount> resultCount)
         {
-            count.Where(item => count != null).ToList().ForEach(tuple =>
+            if (resultCount != null)
             {
-                Console.Write($"{tuple.result}:{tuple.count} ");
-            });
+                resultCount.ForEach(tuple =>
+                {
+                    Console.Write($"{tuple.Result}:{tuple.Count} ");
+                });
+            }
         }
     }
 }
