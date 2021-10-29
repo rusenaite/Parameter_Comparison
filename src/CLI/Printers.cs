@@ -14,14 +14,17 @@ namespace ParameterComparison.src.CLI
         /// <param name="comparedData"></param>
         public static void PrintComparedData(List<ComparedParam> comparedData)
         {
-            Console.WriteLine(new Columns().ToString());
-
-            foreach (ComparedParam pair in comparedData)
+            if (comparedData.Any())
             {
-                SetBackgroundColor(pair);
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine(pair);
-                Console.ResetColor();
+                Console.WriteLine(new Columns().ToString());
+
+                foreach (ComparedParam pair in comparedData)
+                {
+                    SetBackgroundColor(pair);
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine(pair);
+                    Console.ResetColor();
+                }
             }
         }
 
@@ -68,25 +71,6 @@ namespace ParameterComparison.src.CLI
             }
 
             Console.WriteLine("\n");
-        }
-
-        /// <summary>
-        /// Method seperately prints data with string type keys (IDs) (as it is not included
-        /// to the parameter comparison).
-        /// </summary>
-        /// <param name="sourceData"></param>
-        /// <param name="targetData"></param>
-        public static void PrintStringTypeIdData(List<ComparedParam> list)
-        {
-            list.ForEach(pair =>
-            {
-                Console.Write("\n".PadRight(Columns.ColumnWidth) + pair.SourcePair.Key.PadRight(Columns.ColumnWidth) + pair.SourcePair.Value.PadRight(Columns.ColumnWidth));
-            });
-
-            list.ForEach(pair =>
-            {
-                Console.Write("\n".PadRight(Columns.ColumnWidth) + pair.TargetPair.Key.PadRight(Columns.ColumnWidth) + pair.TargetPair.Value.PadRight(Columns.ColumnWidth));
-            });
         }
 
         /// <summary>

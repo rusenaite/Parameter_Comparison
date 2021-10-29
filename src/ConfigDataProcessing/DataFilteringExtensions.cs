@@ -55,18 +55,23 @@ namespace ParameterComparison.src.ConfigDataProcessing
             string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
                               DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
 
-            for (int i = 0; i < keys.Length; ++i)
+            List<ComparedParam> newList = list;
+
+            foreach(var item in newList)
             {
-                foreach (var item in list)
+                foreach (var key in keys)
                 {
-                    if (item.SourcePair.Key == keys[i] | item.TargetPair.Key == keys[i])
+                    if (item.SourcePair.Key == key & item.TargetPair.Key == key)
                     {
-                        list.Remove(item);
+                        if (list.Contains(item))
+                        {
+                            list.Remove(item);
+                        }
                     }
                 }
             }
 
-            return list;
+            return newList;
         }
 
         /// <summary>

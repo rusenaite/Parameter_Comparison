@@ -95,6 +95,11 @@ namespace ParameterComparison.src.CLI.Controllers
                                 "\n\nEnter your choice (number from interval [ 0 ; 3 ]):");
         }
 
+        public static void PrintExtraInputInfo()
+        {
+            Console.WriteLine("Enter ID filter: ");
+        }
+
         /// <summary>
         /// Method reads input from standart input stream.
         /// </summary>
@@ -174,6 +179,7 @@ namespace ParameterComparison.src.CLI.Controllers
         {
             var mapper = new FilteredDataByIdMapper(SourceData, TargetData);
 
+            PrintExtraInputInfo();
             var id = GetFilter(InputValidation.IdFilter);
 
             var result = mapper.Map(model, id);
