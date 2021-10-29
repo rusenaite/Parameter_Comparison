@@ -22,8 +22,7 @@ namespace ParameterComparison.src.CLI
         /// <param name="model"></param>
         public static void PrintParameterListModel(ParameterListModel model)
         {
-            Printers.PrintComparedData(model.ParameterList.GetIntTypeKeys());
-            Printers.PrintStringTypeIdData(model.ParameterList.GetStringTypeKeys().RemovedDeviceInfo());
+            Printers.PrintComparedData(model.ParameterList);
         }
 
         /// <summary>

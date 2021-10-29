@@ -23,7 +23,7 @@ namespace ParameterComparison.src.CLI.Mappers
 
             if (int.TryParse(choice, out int action))
             {
-                model.FilteredDataByComparisonResult = model.FilteredDataByComparisonResult.Where(pair => (int)pair.Action == action).ToList();
+                model.FilteredDataByComparisonResult = model.FilteredDataByComparisonResult.Where(pair => (int)pair.Action == action).ToList().GetIntTypeKeys();
             }
 
             return model;
