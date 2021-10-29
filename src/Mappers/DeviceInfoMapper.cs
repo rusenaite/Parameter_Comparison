@@ -1,39 +1,40 @@
-﻿using ParameterComparison.src.CLI.Models;
-using ParameterComparison.src.ConfigDataProcessing;
+﻿using ParameterComparison.src.ConfigDataProcessing;
+using ParameterComparison.src.Models;
 using System.Collections.Generic;
 
 namespace ParameterComparison.src.CLI.Mappers
 {
     public class DeviceInfoMapper
     {
-        /// <summary>
-        /// Method creates passed source device information model and returns result.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns> If creation went well, returns a dictionary of parameters, otherwise - an empty dictionary. </returns>
-        public Dictionary<string, string> MapSource(DeviceInfoModel model)
-        {
-            return model.CreateSource();
-        }
+        public Dictionary<string, string> SourceData;
+        public Dictionary<string, string> TargetData;
+        public string sourcePath;
+        public string targetPath;
+
+        public readonly string[] keys = { DeviceInfo.configVersion, DeviceInfo.hwVersion, DeviceInfo.title,
+                                          DeviceInfo.minConfiguration, DeviceInfo.fmType, DeviceInfo.specId };
 
         /// <summary>
-        /// Method creates passed target device information model and returns result.
+        /// Constructor assigns passed source and target data dictionary collections to class fields.
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns> If creation went well, returns a dictionary of parameters, otherwise - an empty dictionary. </returns>
-        public Dictionary<string, string> MapTarget(DeviceInfoModel model)
+        /// <param name="sourceData"></param>
+        /// <param name="targetData"></param>
+        public DeviceInfoMapper(Dictionary<string, string> srcData, Dictionary<string, string> trgData, string srcPath, string trgPath)
         {
-            return model.CreateTarget();
+            SourceData = srcData;
+            TargetData = trgData;
+            sourcePath = srcPath;
+            targetPath = trgPath;
         }
 
-        /// <summary>
-        /// Method prints device information.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="path"></param>
-        public void Print(Dictionary<string, string> data, string path)
+        public DeviceInfoModel Map(DeviceInfoModel model)
         {
-            Printers.PrintDeviceConfigInfo(data.GetStringTypeKeys(), path);
+            model.SourceDeviceInfo = SourceData.GetStringTypeKeys();
+            model.TargetDeviceInfo = TargetData.GetStringTypeKeys();
+            model.SourcePath = sourcePath;
+            model.TargetPath = targetPath;
+
+            return model;
         }
     }
 }

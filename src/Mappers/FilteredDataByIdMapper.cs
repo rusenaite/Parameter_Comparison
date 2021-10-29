@@ -1,4 +1,4 @@
-﻿using ParameterComparison.src.CLI.Models;
+﻿using ParameterComparison.src.Models;
 using ParameterComparison.src.ConfigDataProcessing;
 using System.Collections.Generic;
 
@@ -6,23 +6,20 @@ namespace ParameterComparison.src.CLI.Mappers
 {
     public class FilteredDataByIdMapper
     {
-        /// <summary>
-        /// Method creates passed model and returns result list.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns> If creation went well, returns a list of parameters, otherwise - an empty list. </returns>
-        public List<ComparedParam> Map(FilteredDataByIdModel model, string id)
+        public Dictionary<string, string> SourceData;
+        public Dictionary<string, string> TargetData;
+
+        public FilteredDataByIdMapper(Dictionary<string, string> sourceData, Dictionary<string, string> targetData)
         {
-            return model.GetResult(id);
+            SourceData = sourceData;
+            TargetData = targetData;
         }
 
-        /// <summary>
-        /// Method prints a list of filtered data by ID.
-        /// </summary>
-        /// <param name="result"></param>
-        public void Print(List<ComparedParam> result)
+        public IdFilterModel Map(IdFilterModel model, string id)
         {
-            Printers.PrintComparedData(result);
+            List<ComparedParam> list = ConfigurationComparison.CompareConfig(SourceData, TargetData);
+            model.FilteredDataById = ConfigurationComparison.SearchForValue(list, id).GetIntTypeKeys();
+            return model;
         }
     }
 }

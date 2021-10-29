@@ -50,11 +50,14 @@ namespace ParameterComparison.src.ConfigDataProcessing
         }
     }
 
+    /// <summary>
+    /// Enum of constants representing parameter source and target data comparison result.
+    /// </summary>
     public enum ComparisonResult
     {
         Unchanged,
         Added,
-        Removed,
-        Modified
+        Modified,
+        Removed
     }
 }
